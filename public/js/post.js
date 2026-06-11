@@ -47,8 +47,9 @@
         <a href="/profile/${postData.username}">
           <img src="${postData.avatar}" alt="${postData.username}">
         </a>
-        <a href="/profile/${postData.username}" class="post-detail__header-username" style="text-decoration:none;color:inherit;">
+        <a href="/profile/${postData.username}" class="post-detail__header-username" style="text-decoration:none;color:inherit;display:inline-flex;align-items:center;">
           ${postData.username}
+          ${postData.is_verified ? `<span class="verified-badge-inline" style="margin-left:4px;" title="Verified"><svg width="14" height="14" viewBox="0 0 24 24" fill="#0095f6"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></span>` : ''}
         </a>
         ${postData.user_id === currentUser.id ? `
           <button class="post-card__more" onclick="handleDeletePost()" title="Delete">
@@ -68,7 +69,7 @@
             </a>
             <div class="comment-item__body">
               <div class="comment-item__text">
-                <strong><a href="/profile/${postData.username}" style="text-decoration:none;color:inherit;">${postData.username}</a></strong> ${escapeHtml(postData.caption)}
+                <strong><a href="/profile/${postData.username}" style="text-decoration:none;color:inherit;display:inline-flex;align-items:center;">${postData.username}${postData.is_verified ? `<span class="verified-badge-inline" style="margin-left:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="#0095f6"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></span>` : ''}</a></strong> ${escapeHtml(postData.caption)}
               </div>
               <div class="comment-item__time">${timeAgo(postData.created_at)}</div>
             </div>
@@ -84,7 +85,7 @@
             </a>
             <div class="comment-item__body">
               <div class="comment-item__text">
-                <strong><a href="/profile/${c.username}" style="text-decoration:none;color:inherit;">${c.username}</a></strong> ${escapeHtml(c.content)}
+                <strong><a href="/profile/${c.username}" style="text-decoration:none;color:inherit;display:inline-flex;align-items:center;">${c.username}${c.is_verified ? `<span class="verified-badge-inline" style="margin-left:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="#0095f6"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></span>` : ''}</a></strong> ${escapeHtml(c.content)}
               </div>
               <div class="comment-item__time">
                 ${timeAgo(c.created_at)}
@@ -165,7 +166,7 @@
           </a>
           <div class="comment-item__body">
             <div class="comment-item__text">
-              <strong><a href="/profile/${c.username}" style="text-decoration:none;color:inherit;">${c.username}</a></strong> ${escapeHtml(c.content)}
+              <strong><a href="/profile/${c.username}" style="text-decoration:none;color:inherit;display:inline-flex;align-items:center;">${c.username}${c.is_verified ? `<span class="verified-badge-inline" style="margin-left:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="#0095f6"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></span>` : ''}</a></strong> ${escapeHtml(c.content)}
             </div>
             <div class="comment-item__time">
               just now
