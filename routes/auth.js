@@ -71,6 +71,10 @@ router.post('/login', (req, res) => {
         display_name: user.display_name,
         bio: user.bio,
         avatar: user.avatar,
+        links: user.links,
+        pronouns: user.pronouns,
+        gender: user.gender,
+        is_verified: user.is_verified,
       }
     });
   } catch (err) {
@@ -95,7 +99,7 @@ router.get('/me', (req, res) => {
     return res.status(401).json({ error: 'Not authenticated' });
   }
 
-  const user = queryOne('SELECT id, username, display_name, bio, avatar, email FROM users WHERE id = ?', [req.session.userId]);
+  const user = queryOne('SELECT id, username, display_name, bio, avatar, email, links, pronouns, gender, is_verified FROM users WHERE id = ?', [req.session.userId]);
 
   if (!user) {
     return res.status(404).json({ error: 'User not found' });

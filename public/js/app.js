@@ -98,7 +98,10 @@ function setupSearch() {
             <a href="/profile/${user.username}" class="search-result-item" style="text-decoration:none;color:inherit;">
               <img src="${user.avatar}" alt="${user.username}">
               <div class="search-result-item__info">
-                <div class="search-result-item__username">${user.username}</div>
+                <div class="search-result-item__username" style="display:inline-flex;align-items:center;gap:4px;">
+                  ${user.username}
+                  ${user.is_verified ? `<span class="verified-badge-inline"><svg width="12" height="12" viewBox="0 0 24 24" fill="#0095f6"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></span>` : ''}
+                </div>
                 <div class="search-result-item__name">${user.display_name}</div>
               </div>
             </a>
