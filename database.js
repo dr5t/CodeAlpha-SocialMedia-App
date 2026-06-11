@@ -137,37 +137,12 @@ function runSql(sql, params = []) {
   };
 }
 
-function seedDemoData() {
-  const row = queryOne('SELECT COUNT(*) as count FROM users');
-  if (row.count > 0) return;
-
-  const hash = bcrypt.hashSync('password123', 10);
+function seedDemoData(db) {
+  // Check if data already exists
+  const check = db.exec("SELECT COUNT(*) as count FROM users")[0];
+  if (check && check.values[0][0] > 0) return;
 
   const demoUsers = [
-    ['sarah_design', 'sarah@demo.com', hash, 'Sarah Mitchell', '✨ UI/UX Designer | Coffee addict ☕ | Creating beautiful things daily', '/images/avatars/avatar1.svg'],
-    ['alex.photos', 'alex@demo.com', hash, 'Alex Rivera', '📸 Photographer | Traveler 🌍 | Based in NYC', '/images/avatars/avatar2.svg'],
-    ['maya_codes', 'maya@demo.com', hash, 'Maya Chen', '💻 Full-stack developer | Open source enthusiast | Cat mom 🐱', '/images/avatars/avatar3.svg'],
-    ['james_fit', 'james@demo.com', hash, 'James Wilson', '🏋️ Fitness Coach | Nutrition tips | Transform your life 💪', '/images/avatars/avatar4.svg'],
-    ['emma.art', 'emma@demo.com', hash, 'Emma Thompson', '🎨 Digital artist | Illustrator | Commissions open ✉️', '/images/avatars/avatar5.svg'],
-  ];
-
-  for (const u of demoUsers) {
-    db.run('INSERT INTO users (username, email, password_hash, display_name, bio, avatar) VALUES (?, ?, ?, ?, ?, ?)', u);
-  }
-
-  const demoPosts = [
-    [1, '/images/posts/post1.svg', 'Just wrapped up this new dashboard design ✨ What do you think? #design #ui', '2026-06-11 08:30:00'],
-    [2, '/images/posts/post2.svg', 'Golden hour in Central Park 🌅 NYC never disappoints #photography #nyc', '2026-06-11 07:15:00'],
-    [3, '/images/posts/post3.svg', 'Shipped a new feature today! Dark mode is finally here 🌙 #coding #developer', '2026-06-10 22:00:00'],
-    [4, '/images/posts/post4.svg', 'Morning workout done ✅ Consistency is key! 💪 #fitness #motivation', '2026-06-10 18:45:00'],
-    [5, '/images/posts/post5.svg', 'New illustration for a children\'s book project 🎨📚 #art #illustration', '2026-06-10 14:30:00'],
-    [1, '/images/posts/post6.svg', 'Coffee + wireframes = perfect morning ☕✏️ #design #uxdesign', '2026-06-10 10:00:00'],
-    [2, '/images/posts/post7.svg', 'Street photography vibes 🏙️ Love the contrast here #streetphoto', '2026-06-09 20:00:00'],
-    [3, '/images/posts/post8.svg', 'Built a real-time chat app this weekend 🚀 Link in bio! #webdev', '2026-06-09 16:30:00'],
-    [4, '/images/posts/post9.svg', 'Meal prep Sunday 🥗 Eating clean, feeling great #healthyfood', '2026-06-09 12:00:00'],
-    [5, '/images/posts/post10.svg', 'Playing with color palettes for a new project 🌈 #digitalart', '2026-06-08 21:00:00'],
-    [1, '/images/posts/post11.svg', 'Exploring minimalist design trends for 2026 🤍 #minimal #designtrends', '2026-06-08 15:00:00'],
-    [2, '/images/posts/post12.svg', 'Rainy day reflections ☔ Sometimes the best shots come unexpectedly #rain', '2026-06-08 09:00:00'],
   ];
 
   for (const p of demoPosts) {
