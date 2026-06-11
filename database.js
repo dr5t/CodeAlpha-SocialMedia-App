@@ -2,14 +2,48 @@ const initSqlJs = require('sql.js');
 const fs = require('fs');
 const path = require('path');
 const bcrypt = require('bcryptjs');
+const { Pool } = require('pg');
 
 const DATA_DIR = process.env.DATA_DIR || __dirname;
 const DB_PATH = path.join(DATA_DIR, 'social.db');
 
-let db = null;
+const usePostgres = !!process.env.DATABASE_URL;
+let pool = null;
+let sqliteDb = null;
+
+if (usePostgres) {
+  pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false
+    }
+  });
+}
+
+function translateSql(sql) {
+  if (!usePostgres) return sql;
+  let count = 1;
+  return sql.replace(/\?/g, () => `$${count++}`);
+}
+
+function cleanSqlForDb(sql) {
+  if (usePostgres) {
+    return sql
+      .replace(/INTEGER PRIMARY KEY AUTOINCREMENT/gi, 'SERIAL PRIMARY KEY')
+      .replace(/DATETIME/gi, 'TIMESTAMP');
+  }
+  return sql;
+}
 
 async function getDb() {
-  if (db) return db;
+  if (usePostgres) {
+    // Connect to PG pool and initialize
+    await initTables();
+    await seedDemoData();
+    return pool;
+  }
+
+  if (sqliteDb) return sqliteDb;
 
   if (!fs.existsSync(DATA_DIR)) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -19,27 +53,38 @@ async function getDb() {
 
   if (fs.existsSync(DB_PATH)) {
     const buffer = fs.readFileSync(DB_PATH);
-    db = new SQL.Database(buffer);
+    sqliteDb = new SQL.Database(buffer);
   } else {
-    db = new SQL.Database();
+    sqliteDb = new SQL.Database();
   }
 
-  db.run('PRAGMA foreign_keys = ON');
-  initTables();
-  seedDemoData();
+  sqliteDb.run('PRAGMA foreign_keys = ON');
+  await initTables();
+  await seedDemoData();
   saveDb();
 
-  return db;
+  return sqliteDb;
 }
 
 function saveDb() {
-  const data = db.export();
+  if (usePostgres) return;
+  const data = sqliteDb.export();
   const buffer = Buffer.from(data);
   fs.writeFileSync(DB_PATH, buffer);
 }
 
-function initTables() {
-  db.run(`
+async function executeRaw(sql) {
+  const cleaned = cleanSqlForDb(sql);
+  if (usePostgres) {
+    const finalSql = translateSql(cleaned);
+    await pool.query(finalSql);
+  } else {
+    sqliteDb.run(cleaned);
+  }
+}
+
+async function initTables() {
+  await executeRaw(`
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       username TEXT UNIQUE NOT NULL,
@@ -56,7 +101,7 @@ function initTables() {
     )
   `);
 
-  db.run(`
+  await executeRaw(`
     CREATE TABLE IF NOT EXISTS posts (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL,
@@ -67,7 +112,7 @@ function initTables() {
     )
   `);
 
-  db.run(`
+  await executeRaw(`
     CREATE TABLE IF NOT EXISTS comments (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       post_id INTEGER NOT NULL,
@@ -79,7 +124,7 @@ function initTables() {
     )
   `);
 
-  db.run(`
+  await executeRaw(`
     CREATE TABLE IF NOT EXISTS likes (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       post_id INTEGER NOT NULL,
@@ -91,7 +136,7 @@ function initTables() {
     )
   `);
 
-  db.run(`
+  await executeRaw(`
     CREATE TABLE IF NOT EXISTS followers (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       follower_id INTEGER NOT NULL,
@@ -103,7 +148,6 @@ function initTables() {
     )
   `);
 
-  
   const indexes = [
     'CREATE INDEX IF NOT EXISTS idx_posts_user ON posts(user_id)',
     'CREATE INDEX IF NOT EXISTS idx_posts_created ON posts(created_at DESC)',
@@ -114,43 +158,61 @@ function initTables() {
     'CREATE INDEX IF NOT EXISTS idx_followers_follower ON followers(follower_id)',
   ];
   for (const idx of indexes) {
-    db.run(idx);
+    await executeRaw(idx);
   }
 }
 
-
-function queryAll(sql, params = []) {
-  const stmt = db.prepare(sql);
-  if (params.length) stmt.bind(params);
-  const results = [];
-  while (stmt.step()) {
-    results.push(stmt.getAsObject());
+async function queryAll(sql, params = []) {
+  if (usePostgres) {
+    const finalSql = translateSql(sql);
+    const res = await pool.query(finalSql, params);
+    return res.rows;
+  } else {
+    const stmt = sqliteDb.prepare(sql);
+    if (params.length) stmt.bind(params);
+    const results = [];
+    while (stmt.step()) {
+      results.push(stmt.getAsObject());
+    }
+    stmt.free();
+    return results;
   }
-  stmt.free();
-  return results;
 }
 
-
-function queryOne(sql, params = []) {
-  const results = queryAll(sql, params);
+async function queryOne(sql, params = []) {
+  const results = await queryAll(sql, params);
   return results.length > 0 ? results[0] : null;
 }
 
-
-function runSql(sql, params = []) {
-  db.run(sql, params);
-  const lastInsertRowid = queryOne('SELECT last_insert_rowid() as id').id;
-  const changes = queryOne('SELECT changes() as c').c;
-  saveDb();
-  return {
-    lastInsertRowid,
-    changes,
-  };
+async function runSql(sql, params = []) {
+  if (usePostgres) {
+    let finalSql = sql;
+    if (sql.trim().toUpperCase().startsWith('INSERT ')) {
+      finalSql += ' RETURNING id';
+    }
+    finalSql = translateSql(finalSql);
+    const res = await pool.query(finalSql, params);
+    return {
+      lastInsertRowid: res.rows[0]?.id || null,
+      changes: res.rowCount,
+    };
+  } else {
+    sqliteDb.run(sql, params);
+    const lastRowIdQuery = await queryOne('SELECT last_insert_rowid() as id');
+    const lastInsertRowid = lastRowIdQuery ? lastRowIdQuery.id : null;
+    const changesQuery = await queryOne('SELECT changes() as c');
+    const changes = changesQuery ? changesQuery.c : 0;
+    saveDb();
+    return {
+      lastInsertRowid,
+      changes,
+    };
+  }
 }
 
-function seedDemoData() {
-  const row = queryOne('SELECT COUNT(*) as count FROM users');
-  if (row.count > 0) return;
+async function seedDemoData() {
+  const row = await queryOne('SELECT COUNT(*) as count FROM users');
+  if (row && parseInt(row.count) > 0) return;
 
   const hash = bcrypt.hashSync('password123', 10);
 
@@ -160,7 +222,7 @@ function seedDemoData() {
   ];
 
   for (const u of demoUsers) {
-    db.run('INSERT INTO users (username, email, password_hash, display_name, bio, avatar, links, pronouns, gender, is_verified) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', u);
+    await runSql('INSERT INTO users (username, email, password_hash, display_name, bio, avatar, links, pronouns, gender, is_verified) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', u);
   }
 
   const demoPosts = [
@@ -173,7 +235,7 @@ function seedDemoData() {
   ];
 
   for (const p of demoPosts) {
-    db.run('INSERT INTO posts (user_id, image_path, caption, created_at) VALUES (?, ?, ?, ?)', p);
+    await runSql('INSERT INTO posts (user_id, image_path, caption, created_at) VALUES (?, ?, ?, ?)', p);
   }
 
   const comments = [
@@ -182,7 +244,7 @@ function seedDemoData() {
   ];
 
   for (const c of comments) {
-    db.run('INSERT INTO comments (post_id, user_id, content) VALUES (?, ?, ?)', c);
+    await runSql('INSERT INTO comments (post_id, user_id, content) VALUES (?, ?, ?)', c);
   }
 
   const likes = [
@@ -191,7 +253,7 @@ function seedDemoData() {
   ];
 
   for (const l of likes) {
-    db.run('INSERT INTO likes (post_id, user_id) VALUES (?, ?)', l);
+    await runSql('INSERT INTO likes (post_id, user_id) VALUES (?, ?)', l);
   }
 
   const follows = [
@@ -200,7 +262,7 @@ function seedDemoData() {
   ];
 
   for (const f of follows) {
-    db.run('INSERT INTO followers (follower_id, following_id) VALUES (?, ?)', f);
+    await runSql('INSERT INTO followers (follower_id, following_id) VALUES (?, ?)', f);
   }
 
   saveDb();
