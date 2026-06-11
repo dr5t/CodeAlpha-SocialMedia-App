@@ -469,7 +469,10 @@
             <img src="${u.avatar}" alt="${u.username}">
           </a>
           <div class="follow-list-item__info">
-            <a href="/profile/${u.username}" class="follow-list-item__username" style="text-decoration:none;color:inherit;">${u.username}</a>
+            <a href="/profile/${u.username}" class="follow-list-item__username" style="text-decoration:none;color:inherit;display:inline-flex;align-items:center;">
+              ${u.username}
+              ${u.is_verified ? `<span class="verified-badge-inline" style="margin-left:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="#0095f6"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></span>` : ''}
+            </a>
             <div class="follow-list-item__name">${u.display_name}</div>
           </div>
           ${u.id !== currentUser.id ? `
