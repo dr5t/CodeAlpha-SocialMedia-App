@@ -50,7 +50,7 @@ Ensure you have [Node.js](https://nodejs.org/) installed, then execute:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/shauryatiwari/Social-Media-App.git
+   git clone https://github.com/dr5t/Social-Media-App.git
    cd Social-Media-App
    ```
 
