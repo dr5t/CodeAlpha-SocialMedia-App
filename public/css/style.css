@@ -1933,3 +1933,355 @@ ul, ol {
   height: 100%;
   object-fit: contain;
 }
+
+/* ---------- Profile Page Additions & Verification ---------- */
+
+.btn-settings-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: var(--radius-full);
+  transition: background var(--transition), transform 0.2s ease;
+}
+
+.btn-settings-icon:hover {
+  background: var(--bg-tertiary);
+  transform: rotate(30deg);
+}
+
+.btn-settings-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.verified-badge-inline {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.verified-badge-inline svg {
+  display: block;
+}
+
+/* Pronouns styling */
+.profile-pronouns {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 400;
+  margin-left: 8px;
+}
+
+/* Links inside profile bio */
+.profile-bio__link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #00376b;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  margin-top: 6px;
+  width: fit-content;
+}
+
+.profile-bio__link:hover {
+  text-decoration: underline;
+}
+
+.profile-bio__link svg {
+  stroke: #00376b;
+}
+
+/* Edit Avatar Section */
+.edit-avatar-section {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 20px;
+}
+
+.edit-avatar-preview {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+  border: 1px solid var(--border-color);
+}
+
+.edit-avatar-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.avatar-action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  padding: 4px 0;
+  width: fit-content;
+}
+
+.upload-photo-btn {
+  color: var(--accent);
+}
+
+.upload-photo-btn:hover {
+  color: #0056b3;
+}
+
+.remove-photo-btn {
+  color: var(--error, #ed4956);
+}
+
+.remove-photo-btn:hover {
+  color: #c92f3c;
+}
+
+/* Personal Profile Settings shortcut */
+.edit-profile-settings-shortcut {
+  margin-top: 10px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 16px;
+}
+
+.settings-shortcut-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 14px;
+  transition: background var(--transition);
+}
+
+.settings-shortcut-btn:hover {
+  background: var(--border-light);
+}
+
+.settings-shortcut-btn svg {
+  color: var(--text-secondary);
+}
+
+/* Settings Modal */
+.modal--settings {
+  max-width: 420px;
+  border-radius: 12px;
+}
+
+.settings-menu-body {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.settings-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-color);
+  transition: background var(--transition);
+}
+
+.settings-option:hover {
+  background: var(--bg-tertiary);
+}
+
+.settings-option__left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.settings-option__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+}
+
+.settings-option__title {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.settings-option__desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.settings-option .chevron-right {
+  color: var(--text-secondary);
+}
+
+.logout-option:hover {
+  background: rgba(237, 73, 86, 0.05);
+}
+
+.text-danger {
+  color: var(--error, #ed4956);
+}
+
+.logout-icon-svg svg {
+  color: var(--error, #ed4956);
+}
+
+/* Verification Modal */
+.modal--verify {
+  max-width: 480px;
+  border-radius: 16px;
+}
+
+.verify-body {
+  text-align: center;
+  padding: 24px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.verify-badge-large {
+  margin-bottom: 16px;
+  animation: badgePulse 2s infinite ease-in-out;
+}
+
+@keyframes badgePulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); filter: drop-shadow(0 0 10px rgba(0, 149, 246, 0.3)); }
+  100% { transform: scale(1); }
+}
+
+.verify-body h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.verify-subtitle {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.verify-features {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.verify-feature {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.feature-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.feature-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.feature-text strong {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.feature-text span {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.verify-price-tag {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 24px;
+}
+
+.price-amount {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.price-period {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.verify-pay-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, #0095f6 0%, #0077cc 100%);
+  color: white;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 149, 246, 0.2);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.verify-pay-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 149, 246, 0.3);
+}
+
+.verify-pay-btn:active {
+  transform: translateY(1px);
+}
+
+.verify-pay-btn:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Spinner inside pay button */
+.payment-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}

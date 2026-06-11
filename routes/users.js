@@ -14,7 +14,7 @@ router.get('/search', requireAuth, (req, res) => {
     }
 
     const users = queryAll(
-      `SELECT id, username, display_name, avatar, bio
+      `SELECT id, username, display_name, avatar, bio, is_verified
        FROM users
        WHERE (username LIKE ? OR display_name LIKE ?)
        AND id != ?
@@ -33,7 +33,7 @@ router.get('/search', requireAuth, (req, res) => {
 router.get('/suggestions', requireAuth, (req, res) => {
   try {
     const users = queryAll(
-      `SELECT id, username, display_name, avatar, bio
+      `SELECT id, username, display_name, avatar, bio, is_verified
        FROM users
        WHERE id != ?
        AND id NOT IN (SELECT following_id FROM followers WHERE follower_id = ?)
@@ -254,7 +254,7 @@ router.post('/verify/purchase', requireAuth, (req, res) => {
 router.get('/:id/followers', requireAuth, (req, res) => {
   try {
     const followers = queryAll(
-      `SELECT u.id, u.username, u.display_name, u.avatar,
+      `SELECT u.id, u.username, u.display_name, u.avatar, u.is_verified,
         CASE WHEN f2.id IS NOT NULL THEN 1 ELSE 0 END as is_following
        FROM followers f
        JOIN users u ON u.id = f.follower_id
@@ -274,7 +274,7 @@ router.get('/:id/followers', requireAuth, (req, res) => {
 router.get('/:id/following', requireAuth, (req, res) => {
   try {
     const following = queryAll(
-      `SELECT u.id, u.username, u.display_name, u.avatar,
+      `SELECT u.id, u.username, u.display_name, u.avatar, u.is_verified,
         CASE WHEN f2.id IS NOT NULL THEN 1 ELSE 0 END as is_following
        FROM followers f
        JOIN users u ON u.id = f.following_id

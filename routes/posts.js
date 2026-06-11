@@ -20,7 +20,7 @@ router.post('/', requireAuth, (req, res) => {
     );
 
     const post = queryOne(
-      `SELECT p.*, u.username, u.display_name, u.avatar,
+      `SELECT p.*, u.username, u.display_name, u.avatar, u.is_verified,
         0 as like_count, 0 as comment_count, 0 as is_liked
        FROM posts p
        JOIN users u ON u.id = p.user_id
@@ -43,7 +43,7 @@ router.get('/feed', requireAuth, (req, res) => {
     const offset = (page - 1) * limit;
 
     const posts = queryAll(
-      `SELECT p.*, u.username, u.display_name, u.avatar,
+      `SELECT p.*, u.username, u.display_name, u.avatar, u.is_verified,
         (SELECT COUNT(*) FROM likes WHERE post_id = p.id) as like_count,
         (SELECT COUNT(*) FROM comments WHERE post_id = p.id) as comment_count,
         (SELECT COUNT(*) FROM likes WHERE post_id = p.id AND user_id = ?) as is_liked
@@ -73,7 +73,7 @@ router.get('/explore', requireAuth, (req, res) => {
     const offset = (page - 1) * limit;
 
     const posts = queryAll(
-      `SELECT p.*, u.username, u.display_name, u.avatar,
+      `SELECT p.*, u.username, u.display_name, u.avatar, u.is_verified,
         (SELECT COUNT(*) FROM likes WHERE post_id = p.id) as like_count,
         (SELECT COUNT(*) FROM comments WHERE post_id = p.id) as comment_count,
         (SELECT COUNT(*) FROM likes WHERE post_id = p.id AND user_id = ?) as is_liked
@@ -96,7 +96,7 @@ router.get('/explore', requireAuth, (req, res) => {
 router.get('/:id', requireAuth, (req, res) => {
   try {
     const post = queryOne(
-      `SELECT p.*, u.username, u.display_name, u.avatar,
+      `SELECT p.*, u.username, u.display_name, u.avatar, u.is_verified,
         (SELECT COUNT(*) FROM likes WHERE post_id = p.id) as like_count,
         (SELECT COUNT(*) FROM comments WHERE post_id = p.id) as comment_count,
         (SELECT COUNT(*) FROM likes WHERE post_id = p.id AND user_id = ?) as is_liked
@@ -111,7 +111,7 @@ router.get('/:id', requireAuth, (req, res) => {
     }
 
     const comments = queryAll(
-      `SELECT c.*, u.username, u.display_name, u.avatar
+      `SELECT c.*, u.username, u.display_name, u.avatar, u.is_verified
        FROM comments c
        JOIN users u ON u.id = c.user_id
        WHERE c.post_id = ?
