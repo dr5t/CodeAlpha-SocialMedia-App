@@ -37,7 +37,7 @@ Designed with high aesthetics and premium micro-interactions, Vibe Social avoids
 - **User Authentication:** Secure registration and login flows backed by session-based authentication (express-session) and bcrypt hashing.
 - **Stories & Viewed States:** Interactive story rings with neon-gradient active borders that minimize to a simple gray circle once viewed, replicating Instagram's exact user flow.
 - **Advanced Profile Customization:** Modify usernames safely with password validation guards, configure custom avatars (with Multer file uploads), and edit pronouns, genders, bios, and links.
-- **Meta Verified Tick System:** Purchase verification badges mock flows that dynamically render the official blue verified badge next to usernames across feed posts, captions, recommendations, searches, followers lists, and comments.
+- **Vibe Verified Tick System:** Purchase verification badges mock flows that dynamically render the official blue verified badge next to usernames across feed posts, captions, recommendations, searches, followers lists, and comments.
 - **Explore & Feed:** Explore posts in a responsive 3-column overlay grid with hover details, or scroll through a centralized feed page with follow suggestions.
 - **Post Actions & Likes:** Toggle post likes with fluid heart pop animations, support double-tap gestures to like, and CRUD delete functionalities for owner accounts.
 - **Followers & Following Networks:** Connect with and unfollow users dynamically, adjusting user statistics in real-time.
