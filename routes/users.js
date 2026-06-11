@@ -6,14 +6,14 @@ const { requireAuth } = require('../middleware/auth');
 const router = express.Router();
 
 
-router.get('/search', requireAuth, (req, res) => {
+router.get('/search', requireAuth, async (req, res) => {
   try {
     const { q } = req.query;
     if (!q || q.length < 1) {
       return res.json({ users: [] });
     }
 
-    const users = queryAll(
+    const users = await queryAll(
       `SELECT id, username, display_name, avatar, bio, is_verified
        FROM users
        WHERE (username LIKE ? OR display_name LIKE ?)
@@ -30,9 +30,9 @@ router.get('/search', requireAuth, (req, res) => {
 });
 
 
-router.get('/suggestions', requireAuth, (req, res) => {
+router.get('/suggestions', requireAuth, async (req, res) => {
   try {
-    const users = queryAll(
+    const users = await queryAll(
       `SELECT id, username, display_name, avatar, bio, is_verified
        FROM users
        WHERE id != ?
@@ -50,9 +50,9 @@ router.get('/suggestions', requireAuth, (req, res) => {
 });
 
 
-router.get('/:username', requireAuth, (req, res) => {
+router.get('/:username', requireAuth, async (req, res) => {
   try {
-    const user = queryOne(
+    const user = await queryOne(
       'SELECT id, username, display_name, bio, avatar, links, pronouns, gender, is_verified, created_at FROM users WHERE username = ?',
       [req.params.username.toLowerCase()]
     );
@@ -61,10 +61,10 @@ router.get('/:username', requireAuth, (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    const postCount = queryOne('SELECT COUNT(*) as count FROM posts WHERE user_id = ?', [user.id]).count;
-    const followerCount = queryOne('SELECT COUNT(*) as count FROM followers WHERE following_id = ?', [user.id]).count;
-    const followingCount = queryOne('SELECT COUNT(*) as count FROM followers WHERE follower_id = ?', [user.id]).count;
-    const isFollowing = queryOne('SELECT id FROM followers WHERE follower_id = ? AND following_id = ?', [req.session.userId, user.id]);
+    const postCount = (await queryOne('SELECT COUNT(*) as count FROM posts WHERE user_id = ?', [user.id])).count;
+    const followerCount = (await queryOne('SELECT COUNT(*) as count FROM followers WHERE following_id = ?', [user.id])).count;
+    const followingCount = (await queryOne('SELECT COUNT(*) as count FROM followers WHERE follower_id = ?', [user.id])).count;
+    const isFollowing = await queryOne('SELECT id FROM followers WHERE follower_id = ? AND following_id = ?', [req.session.userId, user.id]);
 
     res.json({
       user: {
@@ -83,13 +83,13 @@ router.get('/:username', requireAuth, (req, res) => {
 });
 
 
-router.get('/:id/posts', requireAuth, (req, res) => {
+router.get('/:id/posts', requireAuth, async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = 12;
     const offset = (page - 1) * limit;
 
-    const posts = queryAll(
+    const posts = await queryAll(
       `SELECT p.*,
         (SELECT COUNT(*) FROM likes WHERE post_id = p.id) as like_count,
         (SELECT COUNT(*) FROM comments WHERE post_id = p.id) as comment_count
@@ -108,7 +108,7 @@ router.get('/:id/posts', requireAuth, (req, res) => {
 });
 
 
-router.post('/:id/follow', requireAuth, (req, res) => {
+router.post('/:id/follow', requireAuth, async (req, res) => {
   try {
     const targetId = parseInt(req.params.id);
 
@@ -116,19 +116,19 @@ router.post('/:id/follow', requireAuth, (req, res) => {
       return res.status(400).json({ error: 'Cannot follow yourself' });
     }
 
-    const target = queryOne('SELECT id FROM users WHERE id = ?', [targetId]);
+    const target = await queryOne('SELECT id FROM users WHERE id = ?', [targetId]);
     if (!target) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    const existing = queryOne('SELECT id FROM followers WHERE follower_id = ? AND following_id = ?', [req.session.userId, targetId]);
+    const existing = await queryOne('SELECT id FROM followers WHERE follower_id = ? AND following_id = ?', [req.session.userId, targetId]);
     if (existing) {
       return res.status(409).json({ error: 'Already following' });
     }
 
-    runSql('INSERT INTO followers (follower_id, following_id) VALUES (?, ?)', [req.session.userId, targetId]);
+    await runSql('INSERT INTO followers (follower_id, following_id) VALUES (?, ?)', [req.session.userId, targetId]);
 
-    const followerCount = queryOne('SELECT COUNT(*) as count FROM followers WHERE following_id = ?', [targetId]).count;
+    const followerCount = (await queryOne('SELECT COUNT(*) as count FROM followers WHERE following_id = ?', [targetId])).count;
     res.json({ message: 'Followed', follower_count: followerCount });
   } catch (err) {
     console.error('Follow error:', err);
@@ -137,13 +137,13 @@ router.post('/:id/follow', requireAuth, (req, res) => {
 });
 
 
-router.post('/:id/unfollow', requireAuth, (req, res) => {
+router.post('/:id/unfollow', requireAuth, async (req, res) => {
   try {
     const targetId = parseInt(req.params.id);
 
-    runSql('DELETE FROM followers WHERE follower_id = ? AND following_id = ?', [req.session.userId, targetId]);
+    await runSql('DELETE FROM followers WHERE follower_id = ? AND following_id = ?', [req.session.userId, targetId]);
 
-    const followerCount = queryOne('SELECT COUNT(*) as count FROM followers WHERE following_id = ?', [targetId]).count;
+    const followerCount = (await queryOne('SELECT COUNT(*) as count FROM followers WHERE following_id = ?', [targetId])).count;
     res.json({ message: 'Unfollowed', follower_count: followerCount });
   } catch (err) {
     console.error('Unfollow error:', err);
@@ -152,11 +152,11 @@ router.post('/:id/unfollow', requireAuth, (req, res) => {
 });
 
 
-router.put('/update', requireAuth, (req, res) => {
+router.put('/update', requireAuth, async (req, res) => {
   try {
     const { username, display_name, bio, links, pronouns, gender, password } = req.body;
 
-    const currentUser = queryOne('SELECT * FROM users WHERE id = ?', [req.session.userId]);
+    const currentUser = await queryOne('SELECT * FROM users WHERE id = ?', [req.session.userId]);
     if (!currentUser) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -180,14 +180,14 @@ router.put('/update', requireAuth, (req, res) => {
         return res.status(400).json({ error: 'Username can only contain letters, numbers, dots, and underscores' });
       }
 
-      const existing = queryOne('SELECT id FROM users WHERE username = ?', [newUsername]);
+      const existing = await queryOne('SELECT id FROM users WHERE username = ?', [newUsername]);
       if (existing) {
         return res.status(409).json({ error: 'Username is already taken' });
       }
       targetUsername = newUsername;
     }
 
-    runSql(
+    await runSql(
       `UPDATE users
        SET username = ?, display_name = ?, bio = ?, links = ?, pronouns = ?, gender = ?
        WHERE id = ?`,
@@ -202,7 +202,7 @@ router.put('/update', requireAuth, (req, res) => {
       ]
     );
 
-    const user = queryOne('SELECT id, username, display_name, bio, avatar, links, pronouns, gender, is_verified FROM users WHERE id = ?', [req.session.userId]);
+    const user = await queryOne('SELECT id, username, display_name, bio, avatar, links, pronouns, gender, is_verified FROM users WHERE id = ?', [req.session.userId]);
     res.json({ user });
   } catch (err) {
     console.error('Update user error:', err);
@@ -211,14 +211,14 @@ router.put('/update', requireAuth, (req, res) => {
 });
 
 
-router.post('/avatar', requireAuth, (req, res) => {
+router.post('/avatar', requireAuth, async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
     const avatarUrl = `/uploads/${req.file.filename}`;
-    runSql('UPDATE users SET avatar = ? WHERE id = ?', [avatarUrl, req.session.userId]);
-    const user = queryOne('SELECT id, username, display_name, bio, avatar, links, pronouns, gender, is_verified FROM users WHERE id = ?', [req.session.userId]);
+    await runSql('UPDATE users SET avatar = ? WHERE id = ?', [avatarUrl, req.session.userId]);
+    const user = await queryOne('SELECT id, username, display_name, bio, avatar, links, pronouns, gender, is_verified FROM users WHERE id = ?', [req.session.userId]);
     res.json({ message: 'Avatar updated successfully', user });
   } catch (err) {
     console.error('Avatar update error:', err);
@@ -227,10 +227,10 @@ router.post('/avatar', requireAuth, (req, res) => {
 });
 
 
-router.delete('/avatar', requireAuth, (req, res) => {
+router.delete('/avatar', requireAuth, async (req, res) => {
   try {
-    runSql('UPDATE users SET avatar = "/images/default-avatar.svg" WHERE id = ?', [req.session.userId]);
-    const user = queryOne('SELECT id, username, display_name, bio, avatar, links, pronouns, gender, is_verified FROM users WHERE id = ?', [req.session.userId]);
+    await runSql('UPDATE users SET avatar = "/images/default-avatar.svg" WHERE id = ?', [req.session.userId]);
+    const user = await queryOne('SELECT id, username, display_name, bio, avatar, links, pronouns, gender, is_verified FROM users WHERE id = ?', [req.session.userId]);
     res.json({ message: 'Avatar reset to default', user });
   } catch (err) {
     console.error('Delete avatar error:', err);
@@ -239,10 +239,10 @@ router.delete('/avatar', requireAuth, (req, res) => {
 });
 
 
-router.post('/verify/purchase', requireAuth, (req, res) => {
+router.post('/verify/purchase', requireAuth, async (req, res) => {
   try {
-    runSql('UPDATE users SET is_verified = 1 WHERE id = ?', [req.session.userId]);
-    const user = queryOne('SELECT id, username, display_name, bio, avatar, links, pronouns, gender, is_verified FROM users WHERE id = ?', [req.session.userId]);
+    await runSql('UPDATE users SET is_verified = 1 WHERE id = ?', [req.session.userId]);
+    const user = await queryOne('SELECT id, username, display_name, bio, avatar, links, pronouns, gender, is_verified FROM users WHERE id = ?', [req.session.userId]);
     res.json({ message: 'Verification successful', user });
   } catch (err) {
     console.error('Verify purchase error:', err);
@@ -251,9 +251,9 @@ router.post('/verify/purchase', requireAuth, (req, res) => {
 });
 
 
-router.get('/:id/followers', requireAuth, (req, res) => {
+router.get('/:id/followers', requireAuth, async (req, res) => {
   try {
-    const followers = queryAll(
+    const followers = await queryAll(
       `SELECT u.id, u.username, u.display_name, u.avatar, u.is_verified,
         CASE WHEN f2.id IS NOT NULL THEN 1 ELSE 0 END as is_following
        FROM followers f
@@ -271,9 +271,9 @@ router.get('/:id/followers', requireAuth, (req, res) => {
 });
 
 
-router.get('/:id/following', requireAuth, (req, res) => {
+router.get('/:id/following', requireAuth, async (req, res) => {
   try {
-    const following = queryAll(
+    const following = await queryAll(
       `SELECT u.id, u.username, u.display_name, u.avatar, u.is_verified,
         CASE WHEN f2.id IS NOT NULL THEN 1 ELSE 0 END as is_following
        FROM followers f
