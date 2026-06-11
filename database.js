@@ -134,10 +134,12 @@ function queryOne(sql, params = []) {
 // Helper to run an insert/update/delete
 function runSql(sql, params = []) {
   db.run(sql, params);
+  const lastInsertRowid = queryOne('SELECT last_insert_rowid() as id').id;
+  const changes = queryOne('SELECT changes() as c').c;
   saveDb();
   return {
-    lastInsertRowid: queryOne('SELECT last_insert_rowid() as id').id,
-    changes: queryOne('SELECT changes() as c').c,
+    lastInsertRowid,
+    changes,
   };
 }
 
