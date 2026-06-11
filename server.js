@@ -65,6 +65,12 @@ const commentRoutes = require('./routes/comments');
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 
+// Avatar upload route
+app.post('/api/users/avatar', upload.single('avatar'), (req, res, next) => {
+  req.url = '/avatar';
+  userRoutes(req, res, next);
+});
+
 // Post creation uses multer middleware
 app.post('/api/posts', upload.single('image'), (req, res, next) => {
   // Delegate to postRoutes after multer processes the file
@@ -92,11 +98,8 @@ async function start() {
       console.log(`\n🚀 Vibe Social is running!`);
       console.log(`   Local: http://localhost:${PORT}`);
       console.log(`\n   Demo accounts (password: password123):`);
-      console.log(`   • sarah_design`);
-      console.log(`   • alex.photos`);
-      console.log(`   • maya_codes`);
-      console.log(`   • james_fit`);
-      console.log(`   • emma.art\n`);
+      console.log(`   • priya_designs`);
+      console.log(`   • arjun_photography\n`);
     });
   } catch (err) {
     console.error('Failed to start server:', err);

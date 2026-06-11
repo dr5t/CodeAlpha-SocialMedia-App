@@ -39,19 +39,61 @@
       document.title = `${profileData.display_name} (@${profileData.username}) — Vibe Social`;
 
       profileAvatar.src = profileData.avatar;
-      profileUsername.textContent = profileData.username;
+      
+      // Verified badge logic
+      let usernameHTML = profileData.username;
+      if (profileData.is_verified) {
+        usernameHTML += `
+          <span class="verified-badge-inline" title="Verified">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#0095f6"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          </span>
+        `;
+      }
+      profileUsername.innerHTML = usernameHTML;
+
       statPosts.textContent = profileData.post_count;
       statFollowers.textContent = formatNumber(profileData.follower_count);
       statFollowing.textContent = formatNumber(profileData.following_count);
-      profileDisplayName.textContent = profileData.display_name;
+      
+      // Pronouns display next to name
+      let nameHTML = profileData.display_name;
+      if (profileData.pronouns) {
+        nameHTML += ` <span class="profile-pronouns">${profileData.pronouns}</span>`;
+      }
+      profileDisplayName.innerHTML = nameHTML;
       profileBioText.textContent = profileData.bio || '';
+
+      // Links display in bio
+      if (profileData.links) {
+        let linkEl = document.getElementById('profile-link');
+        if (!linkEl) {
+          linkEl = document.createElement('a');
+          linkEl.id = 'profile-link';
+          linkEl.className = 'profile-bio__link';
+          linkEl.target = '_blank';
+          profileBioText.parentNode.appendChild(linkEl);
+        }
+        linkEl.href = profileData.links.startsWith('http') ? profileData.links : 'https://' + profileData.links;
+        linkEl.innerHTML = `
+          <svg class="link-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          <span>${profileData.links.replace(/^(https?:\/\/)?(www\.)?/, '')}</span>
+        `;
+        linkEl.style.display = 'flex';
+      } else {
+        const linkEl = document.getElementById('profile-link');
+        if (linkEl) linkEl.style.display = 'none';
+      }
 
       // Action buttons
       if (profileData.is_own_profile) {
         profileActions.innerHTML = `
           <button class="btn btn-secondary" id="edit-profile-btn">Edit profile</button>
+          <button class="btn-settings-icon" id="settings-trigger-btn" title="Settings">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </button>
         `;
         document.getElementById('edit-profile-btn').addEventListener('click', openEditModal);
+        document.getElementById('settings-trigger-btn').addEventListener('click', openSettingsModal);
       } else {
         const followClass = profileData.is_following ? 'btn-follow following' : 'btn-follow';
         const followText = profileData.is_following ? 'Following' : 'Follow';

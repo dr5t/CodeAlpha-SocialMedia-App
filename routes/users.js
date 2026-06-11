@@ -1,4 +1,5 @@
 const express = require('express');
+const bcrypt = require('bcryptjs');
 const { queryAll, queryOne, runSql } = require('../database');
 const { requireAuth } = require('../middleware/auth');
 
@@ -52,7 +53,7 @@ router.get('/suggestions', requireAuth, (req, res) => {
 router.get('/:username', requireAuth, (req, res) => {
   try {
     const user = queryOne(
-      'SELECT id, username, display_name, bio, avatar, created_at FROM users WHERE username = ?',
+      'SELECT id, username, display_name, bio, avatar, links, pronouns, gender, is_verified, created_at FROM users WHERE username = ?',
       [req.params.username.toLowerCase()]
     );
 
@@ -153,14 +154,98 @@ router.post('/:id/unfollow', requireAuth, (req, res) => {
 // PUT /api/users/update
 router.put('/update', requireAuth, (req, res) => {
   try {
-    const { display_name, bio } = req.body;
+    const { username, display_name, bio, links, pronouns, gender, password } = req.body;
 
-    runSql('UPDATE users SET display_name = ?, bio = ? WHERE id = ?', [display_name || '', bio || '', req.session.userId]);
+    const currentUser = queryOne('SELECT * FROM users WHERE id = ?', [req.session.userId]);
+    if (!currentUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
 
-    const user = queryOne('SELECT id, username, display_name, bio, avatar FROM users WHERE id = ?', [req.session.userId]);
+    let targetUsername = currentUser.username;
+    const isUsernameChanged = username && username.trim().toLowerCase() !== currentUser.username;
+
+    if (isUsernameChanged) {
+      if (!password) {
+        return res.status(400).json({ error: 'Password is required to change username' });
+      }
+      if (!bcrypt.compareSync(password, currentUser.password_hash)) {
+        return res.status(401).json({ error: 'Incorrect password' });
+      }
+      
+      const newUsername = username.trim().toLowerCase();
+      if (newUsername.length < 3 || newUsername.length > 30) {
+        return res.status(400).json({ error: 'Username must be 3-30 characters' });
+      }
+      if (!/^[a-zA-Z0-9._]+$/.test(newUsername)) {
+        return res.status(400).json({ error: 'Username can only contain letters, numbers, dots, and underscores' });
+      }
+
+      const existing = queryOne('SELECT id FROM users WHERE username = ?', [newUsername]);
+      if (existing) {
+        return res.status(409).json({ error: 'Username is already taken' });
+      }
+      targetUsername = newUsername;
+    }
+
+    runSql(
+      `UPDATE users
+       SET username = ?, display_name = ?, bio = ?, links = ?, pronouns = ?, gender = ?
+       WHERE id = ?`,
+      [
+        targetUsername,
+        display_name !== undefined ? display_name : currentUser.display_name,
+        bio !== undefined ? bio : currentUser.bio,
+        links !== undefined ? links : currentUser.links,
+        pronouns !== undefined ? pronouns : currentUser.pronouns,
+        gender !== undefined ? gender : currentUser.gender,
+        req.session.userId
+      ]
+    );
+
+    const user = queryOne('SELECT id, username, display_name, bio, avatar, links, pronouns, gender, is_verified FROM users WHERE id = ?', [req.session.userId]);
     res.json({ user });
   } catch (err) {
     console.error('Update user error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// POST /api/users/avatar
+router.post('/avatar', requireAuth, (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+    const avatarUrl = `/uploads/${req.file.filename}`;
+    runSql('UPDATE users SET avatar = ? WHERE id = ?', [avatarUrl, req.session.userId]);
+    const user = queryOne('SELECT id, username, display_name, bio, avatar, links, pronouns, gender, is_verified FROM users WHERE id = ?', [req.session.userId]);
+    res.json({ message: 'Avatar updated successfully', user });
+  } catch (err) {
+    console.error('Avatar update error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// DELETE /api/users/avatar
+router.delete('/avatar', requireAuth, (req, res) => {
+  try {
+    runSql('UPDATE users SET avatar = "/images/default-avatar.svg" WHERE id = ?', [req.session.userId]);
+    const user = queryOne('SELECT id, username, display_name, bio, avatar, links, pronouns, gender, is_verified FROM users WHERE id = ?', [req.session.userId]);
+    res.json({ message: 'Avatar reset to default', user });
+  } catch (err) {
+    console.error('Delete avatar error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// POST /api/users/verify/purchase
+router.post('/verify/purchase', requireAuth, (req, res) => {
+  try {
+    runSql('UPDATE users SET is_verified = 1 WHERE id = ?', [req.session.userId]);
+    const user = queryOne('SELECT id, username, display_name, bio, avatar, links, pronouns, gender, is_verified FROM users WHERE id = ?', [req.session.userId]);
+    res.json({ message: 'Verification successful', user });
+  } catch (err) {
+    console.error('Verify purchase error:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });

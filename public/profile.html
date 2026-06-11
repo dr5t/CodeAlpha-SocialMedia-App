@@ -110,16 +110,137 @@
         <button class="modal__share-btn" id="save-profile-btn">Done</button>
       </div>
       <div class="modal__body">
+        <div class="edit-avatar-section">
+          <img src="/images/default-avatar.svg" alt="Avatar Preview" class="edit-avatar-preview" id="edit-avatar-preview">
+          <div class="edit-avatar-actions">
+            <button type="button" class="avatar-action-btn upload-photo-btn" id="trigger-avatar-upload">Change photo</button>
+            <button type="button" class="avatar-action-btn remove-photo-btn" id="remove-avatar-btn">Remove current photo</button>
+            <input type="file" id="avatar-file-input" accept="image/*" style="display:none;">
+          </div>
+        </div>
         <form class="edit-profile-form" id="edit-profile-form">
           <div>
             <label for="edit-display-name">Name</label>
             <input type="text" id="edit-display-name" placeholder="Display name">
           </div>
           <div>
+            <label for="edit-username">Username</label>
+            <input type="text" id="edit-username" placeholder="Username">
+          </div>
+          <div>
+            <label for="edit-password">Confirm Password</label>
+            <input type="password" id="edit-password" placeholder="Enter current password to change username" disabled>
+            <span class="field-hint" id="password-field-hint" style="display:none; color: var(--accent); font-size: 11px; margin-top: 4px;">Password is required when username changes.</span>
+          </div>
+          <div>
             <label for="edit-bio">Bio</label>
             <textarea id="edit-bio" placeholder="Tell people about yourself..."></textarea>
           </div>
+          <div>
+            <label for="edit-pronouns">Pronouns</label>
+            <input type="text" id="edit-pronouns" placeholder="e.g. she/her, he/him, they/them">
+          </div>
+          <div>
+            <label for="edit-links">Website Link</label>
+            <input type="url" id="edit-links" placeholder="e.g. https://yourwebsite.com">
+          </div>
+          <div>
+            <label for="edit-gender">Gender</label>
+            <select id="edit-gender">
+              <option value="Prefer not to say">Prefer not to say</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </div>
+          <div class="edit-profile-settings-shortcut">
+            <button type="button" class="settings-shortcut-btn" id="edit-modal-personal-settings-btn">
+              <span>Personal Profile Settings</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
         </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay" id="settings-modal">
+    <div class="modal modal--settings">
+      <div class="modal__header">
+        <button class="modal__close" id="settings-modal-close">×</button>
+        <span>Settings</span>
+        <span></span>
+      </div>
+      <div class="modal__body settings-menu-body">
+        <div class="settings-option" id="settings-verify-btn">
+          <div class="settings-option__left">
+            <span class="settings-option__icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="#0095f6"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            </span>
+            <div class="settings-option__text">
+              <div class="settings-option__title">Meta Verified</div>
+              <div class="settings-option__desc">Get a verified badge for your profile</div>
+            </div>
+          </div>
+          <svg class="chevron-right" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        
+        <div class="settings-option logout-option" id="settings-logout-btn">
+          <div class="settings-option__left">
+            <span class="settings-option__icon logout-icon-svg">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            </span>
+            <div class="settings-option__text">
+              <div class="settings-option__title text-danger">Log Out</div>
+              <div class="settings-option__desc">Sign out of your account</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Verification Purchase Modal -->
+  <div class="modal-overlay" id="verify-modal">
+    <div class="modal modal--verify">
+      <div class="modal__header">
+        <button class="modal__close" id="verify-modal-close">×</button>
+        <span>Vibe Verified</span>
+        <span></span>
+      </div>
+      <div class="modal__body verify-body">
+        <div class="verify-badge-large">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="#0095f6"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        </div>
+        <h2>Get Verified Badge</h2>
+        <p class="verify-subtitle">Join the verified community of Vibe. Show your followers that your account is authentic.</p>
+        
+        <div class="verify-features">
+          <div class="verify-feature">
+            <span class="feature-icon">✨</span>
+            <div class="feature-text">
+              <strong>Increased Credibility</strong>
+              <span>Your account gets the premium blue checkmark, signaling trust.</span>
+            </div>
+          </div>
+          <div class="verify-feature">
+            <span class="feature-icon">🛡️</span>
+            <div class="feature-text">
+              <strong>Active Protection</strong>
+              <span>Prevent impersonation with proactive monitoring.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="verify-price-tag">
+          <div class="price-amount">₹699</div>
+          <div class="price-period">/ month</div>
+        </div>
+
+        <button type="button" class="verify-pay-btn" id="start-payment-btn">
+          <span class="btn-text">Pay Now</span>
+          <div class="payment-spinner" style="display:none;"></div>
+        </button>
       </div>
     </div>
   </div>

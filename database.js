@@ -43,6 +43,10 @@ function initTables() {
       display_name TEXT NOT NULL DEFAULT '',
       bio TEXT DEFAULT '',
       avatar TEXT DEFAULT '/images/default-avatar.svg',
+      links TEXT,
+      pronouns TEXT,
+      gender TEXT,
+      is_verified INTEGER DEFAULT 0,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);
@@ -144,12 +148,12 @@ function seedDemoData() {
   const hash = bcrypt.hashSync('password123', 10);
 
   const demoUsers = [
-    ['priya_designs', 'priya@example.com', hash, 'Priya Sharma', '✨ UI/UX Designer | Creating beautiful modern interfaces', '/images/avatar_priya.png'],
-    ['arjun_photography', 'arjun@example.com', hash, 'Arjun Verma', '📸 Travel & Lifestyle Photographer | Capturing light', '/images/avatar_arjun.png']
+    ['priya_designs', 'priya@example.com', hash, 'Priya Sharma', '✨ UI/UX Designer | Creating beautiful modern interfaces', '/images/avatar_priya.png', 'https://priyadesigns.com', 'she/her', 'Female', 1],
+    ['arjun_photography', 'arjun@example.com', hash, 'Arjun Verma', '📸 Travel & Lifestyle Photographer | Capturing light', '/images/avatar_arjun.png', 'https://arjunverma.com', 'he/him', 'Male', 0]
   ];
 
   for (const u of demoUsers) {
-    db.run('INSERT INTO users (username, email, password_hash, display_name, bio, avatar) VALUES (?, ?, ?, ?, ?, ?)', u);
+    db.run('INSERT INTO users (username, email, password_hash, display_name, bio, avatar, links, pronouns, gender, is_verified) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', u);
   }
 
   const demoPosts = [
