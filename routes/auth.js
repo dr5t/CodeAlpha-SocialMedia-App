@@ -5,7 +5,7 @@ const { queryAll, queryOne, runSql } = require('../database');
 const router = express.Router();
 
 
-router.post('/register', (req, res) => {
+router.post('/register', async (req, res) => {
   try {
     const { username, email, password, displayName } = req.body;
 
@@ -25,20 +25,20 @@ router.post('/register', (req, res) => {
       return res.status(400).json({ error: 'Password must be at least 6 characters' });
     }
 
-    const existing = queryOne('SELECT id FROM users WHERE username = ? OR email = ?', [username.toLowerCase(), email.toLowerCase()]);
+    const existing = await queryOne('SELECT id FROM users WHERE username = ? OR email = ?', [username.toLowerCase(), email.toLowerCase()]);
     if (existing) {
       return res.status(409).json({ error: 'Username or email already taken' });
     }
 
     const passwordHash = bcrypt.hashSync(password, 10);
-    const result = runSql(
+    const result = await runSql(
       'INSERT INTO users (username, email, password_hash, display_name) VALUES (?, ?, ?, ?)',
       [username.toLowerCase(), email.toLowerCase(), passwordHash, displayName || username]
     );
 
     req.session.userId = result.lastInsertRowid;
 
-    const user = queryOne('SELECT id, username, display_name, bio, avatar FROM users WHERE id = ?', [result.lastInsertRowid]);
+    const user = await queryOne('SELECT id, username, display_name, bio, avatar FROM users WHERE id = ?', [result.lastInsertRowid]);
 
     res.status(201).json({ user });
   } catch (err) {
@@ -48,7 +48,7 @@ router.post('/register', (req, res) => {
 });
 
 
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
 
@@ -56,7 +56,7 @@ router.post('/login', (req, res) => {
       return res.status(400).json({ error: 'Username and password are required' });
     }
 
-    const user = queryOne('SELECT * FROM users WHERE username = ? OR email = ?', [username.toLowerCase(), username.toLowerCase()]);
+    const user = await queryOne('SELECT * FROM users WHERE username = ? OR email = ?', [username.toLowerCase(), username.toLowerCase()]);
 
     if (!user || !bcrypt.compareSync(password, user.password_hash)) {
       return res.status(401).json({ error: 'Invalid username or password' });
@@ -94,12 +94,12 @@ router.post('/logout', (req, res) => {
 });
 
 
-router.get('/me', (req, res) => {
+router.get('/me', async (req, res) => {
   if (!req.session || !req.session.userId) {
     return res.status(401).json({ error: 'Not authenticated' });
   }
 
-  const user = queryOne('SELECT id, username, display_name, bio, avatar, email, links, pronouns, gender, is_verified FROM users WHERE id = ?', [req.session.userId]);
+  const user = await queryOne('SELECT id, username, display_name, bio, avatar, email, links, pronouns, gender, is_verified FROM users WHERE id = ?', [req.session.userId]);
 
   if (!user) {
     return res.status(404).json({ error: 'User not found' });
