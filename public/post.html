@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Vibe Social — Post">
+  <title>Vibe Social — Post</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <!-- Top Header -->
+  <header class="top-header" id="top-header">
+    <div class="top-header__inner">
+      <a class="top-header__logo" href="/feed" id="nav-logo">Vibe</a>
+      <div class="top-header__search" id="search-container">
+        <span class="top-header__search-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </span>
+        <input type="text" placeholder="Search" id="search-input" autocomplete="off">
+        <div class="search-results" id="search-results"></div>
+      </div>
+      <nav class="top-header__actions">
+        <a href="/feed" title="Home" class="desktop-only">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </a>
+        <a href="/explore" title="Explore" class="desktop-only">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+        </a>
+        <a href="#" title="Profile" id="nav-profile-link">
+          <img src="/images/default-avatar.svg" alt="Profile" class="nav-avatar" id="nav-avatar">
+        </a>
+        <button type="button" title="Log out" id="logout-btn" class="desktop-only" style="font-size:13px;font-weight:600;color:var(--accent);">Log out</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Bottom Mobile Nav -->
+  <nav class="bottom-nav" id="bottom-nav">
+    <div class="bottom-nav__inner">
+      <a href="/feed" class="bottom-nav__item" title="Home">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </a>
+      <a href="/explore" class="bottom-nav__item" title="Explore">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+      </a>
+      <a href="#" class="bottom-nav__item" title="Profile" id="mobile-profile-link">
+        <img src="/images/default-avatar.svg" alt="Profile" class="nav-avatar" id="mobile-nav-avatar">
+      </a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="page-content">
+    <div class="post-detail" id="post-detail">
+      <div class="post-detail__card" id="post-card">
+        <!-- Image side -->
+        <div class="post-detail__image-side">
+          <img src="" alt="Post" id="post-image">
+        </div>
+        <!-- Content side -->
+        <div class="post-detail__content-side">
+          <div class="post-detail__header" id="post-header"></div>
+          <div class="post-detail__comments" id="post-comments"></div>
+          <div class="post-detail__actions" id="post-actions"></div>
+          <div class="post-detail__likes" id="post-likes"></div>
+          <div class="post-detail__time" id="post-time"></div>
+          <div class="post-detail__add-comment">
+            <input type="text" placeholder="Add a comment..." id="comment-input">
+            <button type="button" id="post-comment-btn">Post</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="/js/app.js"></script>
+  <script src="/js/post.js"></script>
+</body>
+</html>
