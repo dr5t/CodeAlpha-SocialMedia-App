@@ -5,7 +5,7 @@ const { requireAuth } = require('../middleware/auth');
 const router = express.Router();
 
 
-router.post('/', requireAuth, (req, res) => {
+router.post('/', requireAuth, async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'Image is required' });
@@ -14,12 +14,12 @@ router.post('/', requireAuth, (req, res) => {
     const caption = req.body.caption || '';
     const imagePath = '/uploads/' + req.file.filename;
 
-    const result = runSql(
+    const result = await runSql(
       'INSERT INTO posts (user_id, image_path, caption) VALUES (?, ?, ?)',
       [req.session.userId, imagePath, caption]
     );
 
-    const post = queryOne(
+    const post = await queryOne(
       `SELECT p.*, u.username, u.display_name, u.avatar, u.is_verified,
         0 as like_count, 0 as comment_count, 0 as is_liked
        FROM posts p
@@ -36,13 +36,13 @@ router.post('/', requireAuth, (req, res) => {
 });
 
 
-router.get('/feed', requireAuth, (req, res) => {
+router.get('/feed', requireAuth, async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = 10;
     const offset = (page - 1) * limit;
 
-    const posts = queryAll(
+    const posts = await queryAll(
       `SELECT p.*, u.username, u.display_name, u.avatar, u.is_verified,
         (SELECT COUNT(*) FROM likes WHERE post_id = p.id) as like_count,
         (SELECT COUNT(*) FROM comments WHERE post_id = p.id) as comment_count,
@@ -50,7 +50,7 @@ router.get('/feed', requireAuth, (req, res) => {
        FROM posts p
        JOIN users u ON u.id = p.user_id
        WHERE p.user_id IN (
-         SELECT following_id FROM followers WHERE follower_id = ?
+          SELECT following_id FROM followers WHERE follower_id = ?
        ) OR p.user_id = ?
        ORDER BY p.created_at DESC
        LIMIT ? OFFSET ?`,
@@ -66,13 +66,13 @@ router.get('/feed', requireAuth, (req, res) => {
 });
 
 
-router.get('/explore', requireAuth, (req, res) => {
+router.get('/explore', requireAuth, async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = 12;
     const offset = (page - 1) * limit;
 
-    const posts = queryAll(
+    const posts = await queryAll(
       `SELECT p.*, u.username, u.display_name, u.avatar, u.is_verified,
         (SELECT COUNT(*) FROM likes WHERE post_id = p.id) as like_count,
         (SELECT COUNT(*) FROM comments WHERE post_id = p.id) as comment_count,
@@ -93,9 +93,9 @@ router.get('/explore', requireAuth, (req, res) => {
 });
 
 
-router.get('/:id', requireAuth, (req, res) => {
+router.get('/:id', requireAuth, async (req, res) => {
   try {
-    const post = queryOne(
+    const post = await queryOne(
       `SELECT p.*, u.username, u.display_name, u.avatar, u.is_verified,
         (SELECT COUNT(*) FROM likes WHERE post_id = p.id) as like_count,
         (SELECT COUNT(*) FROM comments WHERE post_id = p.id) as comment_count,
@@ -110,7 +110,7 @@ router.get('/:id', requireAuth, (req, res) => {
       return res.status(404).json({ error: 'Post not found' });
     }
 
-    const comments = queryAll(
+    const comments = await queryAll(
       `SELECT c.*, u.username, u.display_name, u.avatar, u.is_verified
        FROM comments c
        JOIN users u ON u.id = c.user_id
@@ -127,15 +127,15 @@ router.get('/:id', requireAuth, (req, res) => {
 });
 
 
-router.delete('/:id', requireAuth, (req, res) => {
+router.delete('/:id', requireAuth, async (req, res) => {
   try {
-    const post = queryOne('SELECT * FROM posts WHERE id = ? AND user_id = ?', [parseInt(req.params.id), req.session.userId]);
+    const post = await queryOne('SELECT * FROM posts WHERE id = ? AND user_id = ?', [parseInt(req.params.id), req.session.userId]);
 
     if (!post) {
       return res.status(404).json({ error: 'Post not found or not authorized' });
     }
 
-    runSql('DELETE FROM posts WHERE id = ?', [parseInt(req.params.id)]);
+    await runSql('DELETE FROM posts WHERE id = ?', [parseInt(req.params.id)]);
     res.json({ message: 'Post deleted' });
   } catch (err) {
     console.error('Delete post error:', err);
@@ -144,19 +144,19 @@ router.delete('/:id', requireAuth, (req, res) => {
 });
 
 
-router.post('/:id/like', requireAuth, (req, res) => {
+router.post('/:id/like', requireAuth, async (req, res) => {
   try {
     const postId = parseInt(req.params.id);
 
-    const existing = queryOne('SELECT id FROM likes WHERE post_id = ? AND user_id = ?', [postId, req.session.userId]);
+    const existing = await queryOne('SELECT id FROM likes WHERE post_id = ? AND user_id = ?', [postId, req.session.userId]);
 
     if (existing) {
-      runSql('DELETE FROM likes WHERE post_id = ? AND user_id = ?', [postId, req.session.userId]);
+      await runSql('DELETE FROM likes WHERE post_id = ? AND user_id = ?', [postId, req.session.userId]);
     } else {
-      runSql('INSERT INTO likes (post_id, user_id) VALUES (?, ?)', [postId, req.session.userId]);
+      await runSql('INSERT INTO likes (post_id, user_id) VALUES (?, ?)', [postId, req.session.userId]);
     }
 
-    const likeCount = queryOne('SELECT COUNT(*) as count FROM likes WHERE post_id = ?', [postId]).count;
+    const likeCount = (await queryOne('SELECT COUNT(*) as count FROM likes WHERE post_id = ?', [postId])).count;
     const isLiked = !existing;
 
     res.json({ is_liked: isLiked, like_count: likeCount });
