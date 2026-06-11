@@ -24,7 +24,7 @@ router.post('/', requireAuth, (req, res) => {
     );
 
     const comment = queryOne(
-      `SELECT c.*, u.username, u.display_name, u.avatar
+      `SELECT c.*, u.username, u.display_name, u.avatar, u.is_verified
        FROM comments c
        JOIN users u ON u.id = c.user_id
        WHERE c.id = ?`,
