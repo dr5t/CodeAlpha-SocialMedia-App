@@ -5,7 +5,7 @@ const { requireAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
-// GET /api/users/search?q=...
+
 router.get('/search', requireAuth, (req, res) => {
   try {
     const { q } = req.query;
@@ -29,7 +29,7 @@ router.get('/search', requireAuth, (req, res) => {
   }
 });
 
-// GET /api/users/suggestions
+
 router.get('/suggestions', requireAuth, (req, res) => {
   try {
     const users = queryAll(
@@ -49,7 +49,7 @@ router.get('/suggestions', requireAuth, (req, res) => {
   }
 });
 
-// GET /api/users/:username
+
 router.get('/:username', requireAuth, (req, res) => {
   try {
     const user = queryOne(
@@ -82,7 +82,7 @@ router.get('/:username', requireAuth, (req, res) => {
   }
 });
 
-// GET /api/users/:id/posts
+
 router.get('/:id/posts', requireAuth, (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -107,7 +107,7 @@ router.get('/:id/posts', requireAuth, (req, res) => {
   }
 });
 
-// POST /api/users/:id/follow
+
 router.post('/:id/follow', requireAuth, (req, res) => {
   try {
     const targetId = parseInt(req.params.id);
@@ -136,7 +136,7 @@ router.post('/:id/follow', requireAuth, (req, res) => {
   }
 });
 
-// POST /api/users/:id/unfollow
+
 router.post('/:id/unfollow', requireAuth, (req, res) => {
   try {
     const targetId = parseInt(req.params.id);
@@ -151,7 +151,7 @@ router.post('/:id/unfollow', requireAuth, (req, res) => {
   }
 });
 
-// PUT /api/users/update
+
 router.put('/update', requireAuth, (req, res) => {
   try {
     const { username, display_name, bio, links, pronouns, gender, password } = req.body;
@@ -210,7 +210,7 @@ router.put('/update', requireAuth, (req, res) => {
   }
 });
 
-// POST /api/users/avatar
+
 router.post('/avatar', requireAuth, (req, res) => {
   try {
     if (!req.file) {
@@ -226,7 +226,7 @@ router.post('/avatar', requireAuth, (req, res) => {
   }
 });
 
-// DELETE /api/users/avatar
+
 router.delete('/avatar', requireAuth, (req, res) => {
   try {
     runSql('UPDATE users SET avatar = "/images/default-avatar.svg" WHERE id = ?', [req.session.userId]);
@@ -238,7 +238,7 @@ router.delete('/avatar', requireAuth, (req, res) => {
   }
 });
 
-// POST /api/users/verify/purchase
+
 router.post('/verify/purchase', requireAuth, (req, res) => {
   try {
     runSql('UPDATE users SET is_verified = 1 WHERE id = ?', [req.session.userId]);
@@ -250,7 +250,7 @@ router.post('/verify/purchase', requireAuth, (req, res) => {
   }
 });
 
-// GET /api/users/:id/followers
+
 router.get('/:id/followers', requireAuth, (req, res) => {
   try {
     const followers = queryAll(
@@ -270,7 +270,7 @@ router.get('/:id/followers', requireAuth, (req, res) => {
   }
 });
 
-// GET /api/users/:id/following
+
 router.get('/:id/following', requireAuth, (req, res) => {
   try {
     const following = queryAll(

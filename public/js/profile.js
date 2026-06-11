@@ -1,13 +1,13 @@
-// ============================================
-// Vibe Social — Profile Page Logic
-// ============================================
+
+
+
 
 (async function() {
   const authenticated = await checkAuth();
   if (!authenticated) return;
   initApp();
 
-  // Get username from URL
+  
   const pathParts = window.location.pathname.split('/');
   const username = pathParts[pathParts.length - 1];
 
@@ -30,7 +30,7 @@
 
   let profileData = null;
 
-  // --- Load profile ---
+  
   async function loadProfile() {
     try {
       const data = await api(`/api/users/${username}`);
@@ -40,7 +40,7 @@
 
       profileAvatar.src = profileData.avatar;
       
-      // Verified badge logic
+      
       let usernameHTML = profileData.username;
       if (profileData.is_verified) {
         usernameHTML += `
@@ -55,7 +55,7 @@
       statFollowers.textContent = formatNumber(profileData.follower_count);
       statFollowing.textContent = formatNumber(profileData.following_count);
       
-      // Pronouns display next to name
+      
       let nameHTML = profileData.display_name;
       if (profileData.pronouns) {
         nameHTML += ` <span class="profile-pronouns">${profileData.pronouns}</span>`;
@@ -63,7 +63,7 @@
       profileDisplayName.innerHTML = nameHTML;
       profileBioText.textContent = profileData.bio || '';
 
-      // Links display in bio
+      
       if (profileData.links) {
         let linkEl = document.getElementById('profile-link');
         if (!linkEl) {
@@ -84,7 +84,7 @@
         if (linkEl) linkEl.style.display = 'none';
       }
 
-      // Action buttons
+      
       if (profileData.is_own_profile) {
         profileActions.innerHTML = `
           <button class="btn btn-secondary" id="edit-profile-btn">Edit profile</button>
@@ -104,7 +104,7 @@
         document.getElementById('follow-btn').addEventListener('click', handleFollow);
       }
 
-      // Load posts
+      
       loadPosts();
     } catch (err) {
       console.error('Profile error:', err);
@@ -119,7 +119,7 @@
     }
   }
 
-  // --- Load posts grid ---
+  
   async function loadPosts() {
     try {
       const data = await api(`/api/users/${profileData.id}/posts`);
@@ -150,7 +150,7 @@
     }
   }
 
-  // --- Follow/Unfollow ---
+  
   async function handleFollow() {
     const btn = document.getElementById('follow-btn');
     const isFollowing = btn.classList.contains('following');
@@ -177,7 +177,7 @@
     }
   }
 
-  // --- Edit profile modal ---
+  
   function openEditModal() {
     const modal = document.getElementById('edit-modal');
     const nameInput = document.getElementById('edit-display-name');
@@ -203,7 +203,7 @@
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
 
-    // Username input change enables password field
+    
     usernameInput.oninput = () => {
       const changed = usernameInput.value.trim().toLowerCase() !== profileData.username;
       passwordInput.disabled = !changed;
@@ -271,7 +271,7 @@
     }
   });
 
-  // --- Profile Avatar Actions ---
+  
   const triggerAvatarUpload = document.getElementById('trigger-avatar-upload');
   const removeAvatarBtn = document.getElementById('remove-avatar-btn');
   const avatarFileInput = document.getElementById('avatar-file-input');
@@ -329,7 +329,7 @@
     });
   }
 
-  // --- Settings & Verification Badges Modals ---
+  
   const settingsModal = document.getElementById('settings-modal');
   const settingsClose = document.getElementById('settings-modal-close');
   const settingsVerifyBtn = document.getElementById('settings-verify-btn');
@@ -423,7 +423,7 @@
   }
 
 
-  // --- Followers/Following modals ---
+  
   const followListModal = document.getElementById('follow-list-modal');
   const followListTitle = document.getElementById('follow-list-title');
   const followList = document.getElementById('follow-list');
@@ -487,7 +487,7 @@
     }
   }
 
-  // Toggle password visibility helper
+  
   document.querySelectorAll('.password-toggle-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const input = btn.previousElementSibling;
@@ -506,11 +506,11 @@
     });
   });
 
-  // --- Init ---
+  
   await loadProfile();
 })();
 
-// Global handler for follow list items
+
 async function handleListFollow(btn, userId, wasFollowing) {
   try {
     const endpoint = wasFollowing ? 'unfollow' : 'follow';

@@ -1,6 +1,6 @@
-// ============================================
-// Vibe Social — Feed Page Logic
-// ============================================
+
+
+
 
 (async function() {
   const authenticated = await checkAuth();
@@ -16,7 +16,7 @@
   let loading = false;
   let hasMore = true;
 
-  // --- Load stories (from followed users) ---
+  
   function renderStories() {
     api('/api/users/suggestions')
       .then(data => {
@@ -40,7 +40,7 @@
       });
   }
 
-  // --- Render sidebar ---
+  
   function renderSidebar() {
     const sidebarProfile = document.getElementById('sidebar-profile');
     const sidebarSuggestions = document.getElementById('sidebar-suggestions');
@@ -83,7 +83,7 @@
     }
   }
 
-  // --- Render a single post card ---
+  
   function createPostCard(post) {
     const isLiked = post.is_liked > 0;
     const card = document.createElement('div');
@@ -145,7 +145,7 @@
       </div>
     `;
 
-    // Enable/disable post button based on input
+    
     const input = card.querySelector(`#comment-input-${post.id}`);
     const btn = card.querySelector(`#comment-btn-${post.id}`);
     input.addEventListener('input', () => {
@@ -155,7 +155,7 @@
     return card;
   }
 
-  // --- Load feed posts ---
+  
   async function loadFeed() {
     if (loading || !hasMore) return;
     loading = true;
@@ -186,18 +186,18 @@
     loading = false;
   }
 
-  // --- Infinite scroll ---
+  
   window.addEventListener('scroll', () => {
     if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
       loadFeed();
     }
   });
 
-  // --- Init ---
+  
   renderStories();
   renderSidebar();
 
-  // Show skeleton then load
+  
   feedPosts.innerHTML = createPostSkeleton() + createPostSkeleton() + createPostSkeleton();
   setTimeout(async () => {
     feedPosts.innerHTML = '';
@@ -205,7 +205,7 @@
   }, 600);
 })();
 
-// --- Global functions for inline handlers ---
+
 
 function escapeHtml(text) {
   const div = document.createElement('div');
@@ -237,14 +237,14 @@ function doubleTapLike(postId, wrapper) {
   const heart = document.getElementById(`heart-${postId}`);
   const btn = document.getElementById(`like-btn-${postId}`);
 
-  // Only like (don't unlike) on double-tap
+  
   if (!btn.classList.contains('liked')) {
     toggleLike(postId);
   }
 
-  // Animate heart overlay
+  
   heart.classList.remove('animate');
-  void heart.offsetWidth; // force reflow
+  void heart.offsetWidth; 
   heart.classList.add('animate');
 }
 
@@ -297,7 +297,7 @@ async function handleSuggestionFollow(btn, userId) {
   }
 }
 
-// --- Story Viewer Logic ---
+
 let storyTimeout;
 let storyAnimation;
 
@@ -307,21 +307,21 @@ function openStory(username, avatar, ringId) {
   
   document.getElementById('story-avatar').src = avatar;
   document.getElementById('story-username').textContent = username;
-  document.getElementById('story-image').src = avatar; // Fallback to avatar as story image
+  document.getElementById('story-image').src = avatar; 
   
   viewer.classList.add('active');
   
-  // Reset progress bar
+  
   fill.style.transition = 'none';
   fill.style.width = '0%';
   
-  // Start animation after a tiny delay to allow CSS reset to apply
+  
   setTimeout(() => {
     fill.style.transition = 'width 5s linear';
     fill.style.width = '100%';
   }, 50);
   
-  // Auto close after 5 seconds
+  
   clearTimeout(storyTimeout);
   storyTimeout = setTimeout(() => {
     closeStory(ringId);
@@ -333,14 +333,14 @@ function closeStory(ringId) {
   viewer.classList.remove('active');
   clearTimeout(storyTimeout);
   
-  // Mark as viewed
+  
   if (ringId) {
     const ring = document.getElementById(ringId);
     if (ring) ring.classList.add('viewed');
   }
 }
 
-// Close button listener
+
 document.addEventListener('DOMContentLoaded', () => {
   const closeBtn = document.getElementById('story-close-btn');
   if (closeBtn) {

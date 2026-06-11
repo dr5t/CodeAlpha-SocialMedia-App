@@ -1,18 +1,18 @@
-// ============================================
-// Vibe Social — Shared App Utilities
-// ============================================
 
-// --- Current user state ---
+
+
+
+
 let currentUser = null;
 
-// --- API helper ---
+
 async function api(url, options = {}) {
   const config = {
     headers: { 'Content-Type': 'application/json' },
     ...options,
   };
 
-  // Don't set Content-Type for FormData (let browser set boundary)
+  
   if (options.body instanceof FormData) {
     delete config.headers['Content-Type'];
   }
@@ -27,7 +27,7 @@ async function api(url, options = {}) {
   return data;
 }
 
-// --- Auth check ---
+
 async function checkAuth() {
   try {
     const data = await api('/api/auth/me');
@@ -40,7 +40,7 @@ async function checkAuth() {
   }
 }
 
-// --- Update nav with current user ---
+
 function updateNavUser() {
   if (!currentUser) return;
 
@@ -55,7 +55,7 @@ function updateNavUser() {
   if (mobileProfileLink) mobileProfileLink.href = '/profile/' + currentUser.username;
 }
 
-// --- Logout ---
+
 function setupLogout() {
   const logoutBtn = document.getElementById('logout-btn');
   if (logoutBtn) {
@@ -70,7 +70,7 @@ function setupLogout() {
   }
 }
 
-// --- Search ---
+
 function setupSearch() {
   const searchInput = document.getElementById('search-input');
   const searchResults = document.getElementById('search-results');
@@ -114,7 +114,7 @@ function setupSearch() {
     }, 300);
   });
 
-  // Close search results when clicking outside
+  
   document.addEventListener('click', (e) => {
     if (!e.target.closest('#search-container')) {
       searchResults.classList.remove('active');
@@ -128,7 +128,7 @@ function setupSearch() {
   });
 }
 
-// --- Create Post Modal ---
+
 function setupCreatePost() {
   const createBtn = document.getElementById('create-post-btn');
   const createBtnMobile = document.getElementById('create-post-btn-mobile');
@@ -167,7 +167,7 @@ function setupCreatePost() {
     captionInput.value = '';
     shareBtn.disabled = true;
 
-    // Re-attach event listener to new select button
+    
     const newSelectBtn = document.getElementById('select-file-btn');
     if (newSelectBtn) {
       newSelectBtn.addEventListener('click', (e) => {
@@ -196,7 +196,7 @@ function setupCreatePost() {
     if (!selectedFile) fileInput.click();
   });
 
-  // Drag and drop
+  
   uploadArea.addEventListener('dragover', (e) => {
     e.preventDefault();
     uploadArea.style.borderColor = 'var(--accent)';
@@ -254,7 +254,7 @@ function setupCreatePost() {
       closeModal();
       showToast('Post shared!');
 
-      // Reload the page to show new post
+      
       setTimeout(() => window.location.reload(), 500);
     } catch (err) {
       showToast('Failed to share post');
@@ -264,7 +264,7 @@ function setupCreatePost() {
   });
 }
 
-// --- Toast notification ---
+
 function showToast(message) {
   const container = document.getElementById('toast-container');
   if (!container) return;
@@ -279,7 +279,7 @@ function showToast(message) {
   }, 3000);
 }
 
-// --- Relative time ---
+
 function timeAgo(dateStr) {
   const now = new Date();
   const date = new Date(dateStr + (dateStr.includes('Z') ? '' : 'Z'));
@@ -308,7 +308,7 @@ function fullDate(dateStr) {
   });
 }
 
-// --- Like button SVGs ---
+
 const heartOutlineSVG = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
 
 const heartFilledSVG = `<svg width="24" height="24" viewBox="0 0 24 24" fill="var(--like-red)" stroke="var(--like-red)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
@@ -319,7 +319,7 @@ const shareSVG = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" st
 
 const bookmarkSVG = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>`;
 
-// --- Skeleton loaders ---
+
 function createPostSkeleton() {
   return `
     <div class="skeleton-post fade-in">
@@ -339,14 +339,14 @@ function createPostSkeleton() {
   `;
 }
 
-// --- Number formatter ---
+
 function formatNumber(num) {
   if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
   if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
   return num.toString();
 }
 
-// --- Initialize common features ---
+
 function initApp() {
   setupLogout();
   setupSearch();

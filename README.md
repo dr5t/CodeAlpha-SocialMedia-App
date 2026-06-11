@@ -5,12 +5,12 @@
 <h1 align="center">Vibe Social</h1>
 
 <p align="center">
-  <strong>A Premium, High-Fidelity Instagram-Style Social Experience</strong>
+  <strong>A Premium, High-Fidelity Social Experience</strong>
 </p>
 
 <p align="center">
   <a href="http://localhost:3000"><img src="https://img.shields.io/badge/Status-Active-brightgreen?style=for-the-badge" alt="Status" /></a>
-  <a href="https://github.com/shauryatiwari/Social-Media-App"><img src="https://img.shields.io/badge/Platform-Web-blue?style=for-the-badge" alt="Platform" /></a>
+  <a href="https://github.com/dr5t/CodeAlpha-SocialMedia-App"><img src="https://img.shields.io/badge/Platform-Web-blue?style=for-the-badge" alt="Platform" /></a>
 </p>
 
 <p align="center">
@@ -26,7 +26,7 @@
 
 ## 🌟 Introduction
 
-Vibe Social is a modern, premium, and fully-featured social media platform modeled after modern platforms like Instagram. Engineered with a clean architecture, it features a fluid, responsive frontend built with pure HTML, custom CSS variables, and vanilla ES6 JavaScript, connected to a robust Node.js and Express backend powered by sql.js.
+Vibe Social is a modern, premium, and fully-featured social media platform. Engineered with a clean architecture, it features a fluid, responsive frontend built with pure HTML, custom CSS variables, and vanilla ES6 JavaScript, connected to a robust Node.js and Express backend powered by sql.js.
 
 Designed with high aesthetics and premium micro-interactions, Vibe Social avoids rigid templates and boilerplate frameworks to deliver an authentic, human-designed user interface.
 
@@ -35,7 +35,7 @@ Designed with high aesthetics and premium micro-interactions, Vibe Social avoids
 ## 🚀 Key Features
 
 - **User Authentication:** Secure registration and login flows backed by session-based authentication (express-session) and bcrypt hashing.
-- **Stories & Viewed States:** Interactive story rings with neon-gradient active borders that minimize to a simple gray circle once viewed, replicating Instagram's exact user flow.
+- **Stories & Viewed States:** Interactive story rings with neon-gradient active borders that minimize to a simple gray circle once viewed, replicating modern social app user flows.
 - **Advanced Profile Customization:** Modify usernames safely with password validation guards, configure custom avatars (with Multer file uploads), and edit pronouns, genders, bios, and links.
 - **Vibe Verified Tick System:** Purchase verification badges mock flows that dynamically render the official blue verified badge next to usernames across feed posts, captions, recommendations, searches, followers lists, and comments.
 - **Explore & Feed:** Explore posts in a responsive 3-column overlay grid with hover details, or scroll through a centralized feed page with follow suggestions.
@@ -50,7 +50,7 @@ Ensure you have [Node.js](https://nodejs.org/) installed, then execute:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/dr5t/Social-Media-App.git
+   git clone https://github.com/dr5t/CodeAlpha-SocialMedia-App.git
    cd Social-Media-App
    ```
 
@@ -76,7 +76,7 @@ The local database comes pre-seeded with highly realistic accounts featuring rea
 | Username | Name | Verification Status | Password |
 |---|---|---|---|
 | `priya_designs` | Priya Sharma | ✅ Verified (UX Designer) | `password123` |
-| `arjun_photography` | Arjun Verma | ❌ Standard (Photographer) | `password123` |
+| `dr5t` | Shaurya Tiwari | ✅ Verified (Creator) | `password123` |
 
 ---
 

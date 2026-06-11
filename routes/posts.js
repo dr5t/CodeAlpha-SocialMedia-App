@@ -4,7 +4,7 @@ const { requireAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
-// POST /api/posts — create a new post (multer middleware applied in server.js)
+
 router.post('/', requireAuth, (req, res) => {
   try {
     if (!req.file) {
@@ -35,7 +35,7 @@ router.post('/', requireAuth, (req, res) => {
   }
 });
 
-// GET /api/posts/feed — posts from followed users + self
+
 router.get('/feed', requireAuth, (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -65,7 +65,7 @@ router.get('/feed', requireAuth, (req, res) => {
   }
 });
 
-// GET /api/posts/explore — all posts
+
 router.get('/explore', requireAuth, (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -92,7 +92,7 @@ router.get('/explore', requireAuth, (req, res) => {
   }
 });
 
-// GET /api/posts/:id — single post with comments
+
 router.get('/:id', requireAuth, (req, res) => {
   try {
     const post = queryOne(
@@ -126,7 +126,7 @@ router.get('/:id', requireAuth, (req, res) => {
   }
 });
 
-// DELETE /api/posts/:id
+
 router.delete('/:id', requireAuth, (req, res) => {
   try {
     const post = queryOne('SELECT * FROM posts WHERE id = ? AND user_id = ?', [parseInt(req.params.id), req.session.userId]);
@@ -143,7 +143,7 @@ router.delete('/:id', requireAuth, (req, res) => {
   }
 });
 
-// POST /api/posts/:id/like — toggle like
+
 router.post('/:id/like', requireAuth, (req, res) => {
   try {
     const postId = parseInt(req.params.id);

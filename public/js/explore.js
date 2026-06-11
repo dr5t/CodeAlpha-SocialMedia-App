@@ -1,6 +1,6 @@
-// ============================================
-// Vibe Social — Explore Page Logic
-// ============================================
+
+
+
 
 (async function() {
   const authenticated = await checkAuth();
@@ -53,7 +53,7 @@
     loading = false;
   }
 
-  // Infinite scroll
+  
   window.addEventListener('scroll', () => {
     if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
       loadExplore();

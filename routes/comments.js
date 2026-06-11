@@ -4,7 +4,7 @@ const { requireAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
-// POST /api/comments
+
 router.post('/', requireAuth, (req, res) => {
   try {
     const { post_id, content } = req.body;
@@ -40,7 +40,7 @@ router.post('/', requireAuth, (req, res) => {
   }
 });
 
-// DELETE /api/comments/:id
+
 router.delete('/:id', requireAuth, (req, res) => {
   try {
     const comment = queryOne('SELECT * FROM comments WHERE id = ? AND user_id = ?', [parseInt(req.params.id), req.session.userId]);

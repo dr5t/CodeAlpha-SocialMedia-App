@@ -98,7 +98,7 @@ function initTables() {
     )
   `);
 
-  // indexes
+  
   const indexes = [
     'CREATE INDEX IF NOT EXISTS idx_posts_user ON posts(user_id)',
     'CREATE INDEX IF NOT EXISTS idx_posts_created ON posts(created_at DESC)',
@@ -113,7 +113,7 @@ function initTables() {
   }
 }
 
-// Helper to run a query and return all results as array of objects
+
 function queryAll(sql, params = []) {
   const stmt = db.prepare(sql);
   if (params.length) stmt.bind(params);
@@ -125,13 +125,13 @@ function queryAll(sql, params = []) {
   return results;
 }
 
-// Helper to run a query and return first result as object
+
 function queryOne(sql, params = []) {
   const results = queryAll(sql, params);
   return results.length > 0 ? results[0] : null;
 }
 
-// Helper to run an insert/update/delete
+
 function runSql(sql, params = []) {
   db.run(sql, params);
   const lastInsertRowid = queryOne('SELECT last_insert_rowid() as id').id;
@@ -151,7 +151,7 @@ function seedDemoData() {
 
   const demoUsers = [
     ['priya_designs', 'priya@example.com', hash, 'Priya Sharma', '✨ UI/UX Designer | Creating beautiful modern interfaces', '/images/avatar_priya.png', 'https://priyadesigns.com', 'she/her', 'Female', 1],
-    ['arjun_photography', 'arjun@example.com', hash, 'Arjun Verma', '📸 Travel & Lifestyle Photographer | Capturing light', '/images/avatar_arjun.png', 'https://arjunverma.com', 'he/him', 'Male', 0]
+    ['dr5t', 'dr5t@example.com', hash, 'Shaurya Tiwari', '✨ Creator of Vibe Social | Developer', '/images/avatar_dr5t.png', 'https://github.com/dr5t', 'he/him', 'Male', 1]
   ];
 
   for (const u of demoUsers) {
@@ -173,7 +173,7 @@ function seedDemoData() {
 
   const comments = [
     [1, 2, 'Wow, the colors on this dashboard are stunning! Great work Priya.'],
-    [4, 1, 'The lighting here is just magical! You have such a great eye Arjun.']
+    [4, 1, 'The lighting here is just magical! You have such a great eye Shaurya.']
   ];
 
   for (const c of comments) {
@@ -181,8 +181,8 @@ function seedDemoData() {
   }
 
   const likes = [
-    [1, 2], [2, 2], [3, 2], // Arjun likes Priya's posts
-    [4, 1], [5, 1], [6, 1]  // Priya likes Arjun's posts
+    [1, 2], [2, 2], [3, 2], 
+    [4, 1], [5, 1], [6, 1]  
   ];
 
   for (const l of likes) {

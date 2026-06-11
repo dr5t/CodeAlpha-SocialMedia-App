@@ -4,7 +4,7 @@ const { queryAll, queryOne, runSql } = require('../database');
 
 const router = express.Router();
 
-// POST /api/auth/register
+
 router.post('/register', (req, res) => {
   try {
     const { username, email, password, displayName } = req.body;
@@ -47,7 +47,7 @@ router.post('/register', (req, res) => {
   }
 });
 
-// POST /api/auth/login
+
 router.post('/login', (req, res) => {
   try {
     const { username, password } = req.body;
@@ -83,7 +83,7 @@ router.post('/login', (req, res) => {
   }
 });
 
-// POST /api/auth/logout
+
 router.post('/logout', (req, res) => {
   req.session.destroy((err) => {
     if (err) {
@@ -93,7 +93,7 @@ router.post('/logout', (req, res) => {
   });
 });
 
-// GET /api/auth/me
+
 router.get('/me', (req, res) => {
   if (!req.session || !req.session.userId) {
     return res.status(401).json({ error: 'Not authenticated' });

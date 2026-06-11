@@ -1,13 +1,13 @@
-// ============================================
-// Vibe Social — Post Detail Page Logic
-// ============================================
+
+
+
 
 (async function() {
   const authenticated = await checkAuth();
   if (!authenticated) return;
   initApp();
 
-  // Get post ID from URL
+  
   const pathParts = window.location.pathname.split('/');
   const postId = parseInt(pathParts[pathParts.length - 1]);
 
@@ -28,7 +28,7 @@
   let postData = null;
   let isLiked = false;
 
-  // --- Load post ---
+  
   async function loadPost() {
     try {
       const data = await api(`/api/posts/${postId}`);
@@ -38,11 +38,11 @@
 
       document.title = `${postData.username}'s post — Vibe Social`;
 
-      // Image
+      
       postImage.src = postData.image_path;
       postImage.alt = `Post by ${postData.username}`;
 
-      // Header
+      
       postHeader.innerHTML = `
         <a href="/profile/${postData.username}">
           <img src="${postData.avatar}" alt="${postData.username}">
@@ -58,7 +58,7 @@
         ` : ''}
       `;
 
-      // Comments (including caption as first "comment")
+      
       let commentsHtml = '';
 
       if (postData.caption) {
@@ -98,10 +98,10 @@
 
       postComments.innerHTML = commentsHtml;
 
-      // Scroll to bottom of comments
+      
       postComments.scrollTop = postComments.scrollHeight;
 
-      // Actions
+      
       postActions.innerHTML = `
         <button class="post-card__action-btn ${isLiked ? 'liked' : ''}" id="detail-like-btn" onclick="handleToggleLike()">
           ${isLiked ? heartFilledSVG : heartOutlineSVG}
@@ -117,10 +117,10 @@
         </button>
       `;
 
-      // Likes
+      
       postLikes.textContent = `${formatNumber(postData.like_count)} ${postData.like_count === 1 ? 'like' : 'likes'}`;
 
-      // Time
+      
       postTime.textContent = fullDate(postData.created_at);
 
     } catch (err) {
@@ -136,7 +136,7 @@
     }
   }
 
-  // --- Comment input ---
+  
   commentInput.addEventListener('input', () => {
     postCommentBtn.classList.toggle('active', commentInput.value.trim().length > 0);
   });
@@ -186,11 +186,11 @@
     }
   }
 
-  // --- Init ---
+  
   await loadPost();
 })();
 
-// --- Global handlers ---
+
 
 function escapeHtml(text) {
   const div = document.createElement('div');

@@ -1,10 +1,10 @@
-/* ============================================
-   VIBE SOCIAL — Instagram-Style Design System
-   ============================================ */
+
+
+
 
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
-/* ---------- CSS Reset & Base ---------- */
+
 *, *::before, *::after {
   margin: 0;
   padding: 0;
@@ -12,7 +12,7 @@
 }
 
 :root {
-  /* Instagram-inspired palette */
+  
   --bg-primary: #fafafa;
   --bg-secondary: #ffffff;
   --bg-tertiary: #f0f0f0;
@@ -89,7 +89,7 @@ ul, ol {
   list-style: none;
 }
 
-/* ---------- Utilities ---------- */
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -107,7 +107,7 @@ ul, ol {
   padding: 0 20px;
 }
 
-/* ---------- Top Header / Navbar ---------- */
+
 .top-header {
   position: fixed;
   top: 0;
@@ -277,7 +277,7 @@ ul, ol {
   border-color: var(--text-primary);
 }
 
-/* ---------- Bottom Mobile Nav ---------- */
+
 .bottom-nav {
   display: none;
   position: fixed;
@@ -324,14 +324,14 @@ ul, ol {
   height: 26px;
 }
 
-/* ---------- Page Layout ---------- */
+
 .page-content {
   padding-top: calc(var(--header-height) + 20px);
   padding-bottom: 20px;
   min-height: 100vh;
 }
 
-/* ---------- Feed Layout ---------- */
+
 .feed-layout {
   display: flex;
   justify-content: center;
@@ -354,7 +354,7 @@ ul, ol {
   height: fit-content;
 }
 
-/* ---------- Stories Bar ---------- */
+
 .stories-bar {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
@@ -413,7 +413,7 @@ ul, ol {
   text-align: center;
 }
 
-/* ---------- Post Card ---------- */
+
 .post-card {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
@@ -482,7 +482,7 @@ ul, ol {
   display: block;
 }
 
-/* Double-tap heart overlay */
+
 .heart-overlay {
   position: absolute;
   top: 50%;
@@ -650,7 +650,7 @@ ul, ol {
   cursor: pointer;
 }
 
-/* ---------- Sidebar (Desktop) ---------- */
+
 .sidebar-profile {
   display: flex;
   align-items: center;
@@ -773,7 +773,7 @@ ul, ol {
   color: var(--text-tertiary);
 }
 
-/* ---------- Buttons ---------- */
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -851,7 +851,7 @@ ul, ol {
   cursor: not-allowed;
 }
 
-/* ---------- Auth Page ---------- */
+
 .auth-page {
   min-height: 100vh;
   display: flex;
@@ -1023,7 +1023,7 @@ ul, ol {
   font-weight: 600;
 }
 
-/* ---------- Profile Page ---------- */
+
 .profile-header {
   display: flex;
   gap: 32px;
@@ -1181,7 +1181,7 @@ ul, ol {
   font-size: 16px;
 }
 
-/* ---------- Explore Page ---------- */
+
 .explore-grid {
   max-width: var(--max-width);
   margin: 0 auto;
@@ -1235,7 +1235,7 @@ ul, ol {
   font-size: 16px;
 }
 
-/* ---------- Post Detail Page ---------- */
+
 .post-detail {
   max-width: var(--max-width);
   margin: 30px auto;
@@ -1395,7 +1395,7 @@ ul, ol {
   cursor: pointer;
 }
 
-/* ---------- Create Post Modal ---------- */
+
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -1530,7 +1530,7 @@ ul, ol {
   color: var(--text-secondary);
 }
 
-/* ---------- Edit Profile Modal ---------- */
+
 .edit-profile-form {
   display: flex;
   flex-direction: column;
@@ -1560,7 +1560,7 @@ ul, ol {
   resize: vertical;
 }
 
-/* ---------- Follow List Modal ---------- */
+
 .follow-list {
   max-height: 400px;
   overflow-y: auto;
@@ -1598,7 +1598,7 @@ ul, ol {
   color: var(--text-secondary);
 }
 
-/* ---------- Toast Notification ---------- */
+
 .toast-container {
   position: fixed;
   bottom: 80px;
@@ -1634,7 +1634,7 @@ ul, ol {
   to { opacity: 0; transform: translateY(-10px); }
 }
 
-/* ---------- Skeleton Loading ---------- */
+
 .skeleton {
   background: linear-gradient(90deg, var(--bg-tertiary) 25%, #e8e8e8 50%, var(--bg-tertiary) 75%);
   background-size: 200% 100%;
@@ -1697,7 +1697,7 @@ ul, ol {
   gap: 8px;
 }
 
-/* ---------- Empty State ---------- */
+
 .empty-state {
   text-align: center;
   padding: 60px 20px;
@@ -1722,7 +1722,7 @@ ul, ol {
   margin-bottom: 20px;
 }
 
-/* ---------- Loader spinner ---------- */
+
 .loader {
   display: flex;
   justify-content: center;
@@ -1742,7 +1742,7 @@ ul, ol {
   to { transform: rotate(360deg); }
 }
 
-/* ---------- Animations ---------- */
+
 @keyframes fadeSlideDown {
   from { opacity: 0; transform: translateY(-8px); }
   to { opacity: 1; transform: translateY(0); }
@@ -1757,7 +1757,7 @@ ul, ol {
   animation: fadeIn 0.3s ease;
 }
 
-/* ---------- Responsive ---------- */
+
 @media (max-width: 935px) {
   .feed-sidebar {
     display: none;
@@ -1858,7 +1858,7 @@ ul, ol {
   }
 }
 
-/* ---------- Story Viewer Modal ---------- */
+
 .story-viewer {
   position: fixed;
   top: 0;
@@ -1969,7 +1969,7 @@ ul, ol {
   object-fit: contain;
 }
 
-/* ---------- Profile Page Additions & Verification ---------- */
+
 
 .btn-settings-icon {
   background: none;
@@ -2005,7 +2005,7 @@ ul, ol {
   display: block;
 }
 
-/* Pronouns styling */
+
 .profile-pronouns {
   font-size: 14px;
   color: var(--text-secondary);
@@ -2013,7 +2013,7 @@ ul, ol {
   margin-left: 8px;
 }
 
-/* Links inside profile bio */
+
 .profile-bio__link {
   display: flex;
   align-items: center;
@@ -2034,7 +2034,7 @@ ul, ol {
   stroke: #00376b;
 }
 
-/* Edit Avatar Section */
+
 .edit-avatar-section {
   display: flex;
   align-items: center;
@@ -2085,7 +2085,7 @@ ul, ol {
   color: #c92f3c;
 }
 
-/* Personal Profile Settings shortcut */
+
 .edit-profile-settings-shortcut {
   margin-top: 10px;
   border-top: 1px solid var(--border-color);
@@ -2117,7 +2117,7 @@ ul, ol {
   color: var(--text-secondary);
 }
 
-/* Settings Modal */
+
 .modal--settings {
   max-width: 420px;
   border-radius: 12px;
@@ -2184,7 +2184,7 @@ ul, ol {
   color: var(--error, #ed4956);
 }
 
-/* Verification Modal */
+
 .modal--verify {
   max-width: 480px;
   border-radius: 16px;
@@ -2311,7 +2311,7 @@ ul, ol {
   transform: none;
 }
 
-/* Spinner inside pay button */
+
 .payment-spinner {
   width: 20px;
   height: 20px;

@@ -1,16 +1,16 @@
-// ============================================
-// Vibe Social — Auth Page Logic
-// ============================================
+
+
+
 
 (function() {
-  // Check if already logged in
+  
   fetch('/api/auth/me')
     .then(res => {
       if (res.ok) window.location.href = '/feed';
     })
     .catch(() => {});
 
-  // Toggle between login and register
+  
   const loginCard = document.getElementById('login-card');
   const registerCard = document.getElementById('register-card');
   const loginSwitch = document.getElementById('login-switch');
@@ -34,7 +34,7 @@
     loginSwitch.style.display = 'block';
   });
 
-  // Login form
+  
   const loginForm = document.getElementById('login-form');
   const loginError = document.getElementById('login-error');
 
@@ -78,7 +78,7 @@
     }
   });
 
-  // Register form
+  
   const registerForm = document.getElementById('register-form');
   const registerError = document.getElementById('register-error');
 
@@ -124,7 +124,7 @@
     }
   });
 
-  // Toggle password visibility helper
+  
   document.querySelectorAll('.password-toggle-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const input = btn.previousElementSibling;
