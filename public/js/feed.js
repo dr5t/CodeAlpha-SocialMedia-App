@@ -90,7 +90,10 @@
           <img src="${post.avatar}" alt="${post.username}" class="post-card__avatar">
         </a>
         <div class="post-card__user-info">
-          <a href="/profile/${post.username}" class="post-card__username">${post.username}</a>
+          <a href="/profile/${post.username}" class="post-card__username" style="display:inline-flex;align-items:center;">
+            ${post.username}
+            ${post.is_verified ? `<span class="verified-badge-inline" style="margin-left:4px;" title="Verified"><svg width="14" height="14" viewBox="0 0 24 24" fill="#0095f6"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></span>` : ''}
+          </a>
           <div class="post-card__time">${timeAgo(post.created_at)}</div>
         </div>
         ${post.user_id === currentUser.id ? `
@@ -121,7 +124,7 @@
         <div class="post-card__likes" id="likes-count-${post.id}">${formatNumber(post.like_count)} ${post.like_count === 1 ? 'like' : 'likes'}</div>
         ${post.caption ? `
           <div class="post-card__caption">
-            <strong><a href="/profile/${post.username}" style="text-decoration:none;color:inherit;">${post.username}</a></strong> ${escapeHtml(post.caption)}
+            <strong><a href="/profile/${post.username}" style="text-decoration:none;color:inherit;display:inline-flex;align-items:center;">${post.username}${post.is_verified ? `<span class="verified-badge-inline" style="margin-left:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="#0095f6"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></span>` : ''}</a></strong> ${escapeHtml(post.caption)}
           </div>
         ` : ''}
         ${post.comment_count > 0 ? `
