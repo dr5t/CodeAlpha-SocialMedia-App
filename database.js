@@ -137,12 +137,28 @@ function runSql(sql, params = []) {
   };
 }
 
-function seedDemoData(db) {
-  // Check if data already exists
-  const check = db.exec("SELECT COUNT(*) as count FROM users")[0];
-  if (check && check.values[0][0] > 0) return;
+function seedDemoData() {
+  const row = queryOne('SELECT COUNT(*) as count FROM users');
+  if (row.count > 0) return;
+
+  const hash = bcrypt.hashSync('password123', 10);
 
   const demoUsers = [
+    ['priya_designs', 'priya@example.com', hash, 'Priya Sharma', '✨ UI/UX Designer | Creating beautiful modern interfaces', '/images/avatar_priya.png'],
+    ['arjun_photography', 'arjun@example.com', hash, 'Arjun Verma', '📸 Travel & Lifestyle Photographer | Capturing light', '/images/avatar_arjun.png']
+  ];
+
+  for (const u of demoUsers) {
+    db.run('INSERT INTO users (username, email, password_hash, display_name, bio, avatar) VALUES (?, ?, ?, ?, ?, ?)', u);
+  }
+
+  const demoPosts = [
+    [1, '/images/posts/post1.svg', 'Just finished the new dashboard design concept! What do you guys think? 🎨 #design #uiux', '2026-06-11 08:30:00'],
+    [1, '/images/posts/post10.svg', 'Experimenting with some new color palettes today. Love these vibrant tones. 🌈', '2026-06-11 07:15:00'],
+    [1, '/images/posts/post11.svg', 'Minimalism is key. Less is always more. ✨', '2026-06-10 22:00:00'],
+    [2, '/images/posts/post2.svg', 'Golden hour never disappoints. Caught this beautiful light yesterday evening. 🌇 #photography', '2026-06-10 18:45:00'],
+    [2, '/images/posts/post7.svg', 'Street photography vibes in the city center. 🏙️', '2026-06-10 14:30:00'],
+    [2, '/images/posts/post12.svg', 'Moody rainy days are my favorite to shoot in. 🌧️', '2026-06-10 10:00:00']
   ];
 
   for (const p of demoPosts) {
@@ -150,19 +166,8 @@ function seedDemoData(db) {
   }
 
   const comments = [
-    [1, 2, 'This looks amazing! Love the color choices 🔥'],
-    [1, 3, 'Clean design! What tool did you use?'],
-    [1, 5, 'The typography is perfect 👌'],
-    [2, 1, 'Stunning shot! 😍'],
-    [2, 4, 'NYC sunsets hit different'],
-    [3, 1, 'Finally! I\'ve been waiting for dark mode 🙌'],
-    [3, 2, 'Great work Maya!'],
-    [4, 3, 'You\'re so dedicated! 💪'],
-    [5, 1, 'This is adorable! Love the style'],
-    [5, 3, 'Beautiful work Emma ❤️'],
-    [6, 2, 'Same! Coffee is essential for creativity ☕'],
-    [7, 5, 'Love the shadows in this one'],
-    [8, 4, 'That\'s impressive for a weekend project!'],
+    [1, 2, 'Wow, the colors on this dashboard are stunning! Great work Priya.'],
+    [4, 1, 'The lighting here is just magical! You have such a great eye Arjun.']
   ];
 
   for (const c of comments) {
@@ -170,18 +175,8 @@ function seedDemoData(db) {
   }
 
   const likes = [
-    [1,2],[1,3],[1,4],[1,5],
-    [2,1],[2,3],[2,5],
-    [3,1],[3,2],[3,4],[3,5],
-    [4,1],[4,2],[4,3],
-    [5,1],[5,2],[5,3],[5,4],
-    [6,2],[6,3],
-    [7,1],[7,5],
-    [8,1],[8,4],[8,5],
-    [9,1],[9,3],
-    [10,1],[10,2],[10,3],
-    [11,2],[11,4],[11,5],
-    [12,1],[12,3],
+    [1, 2], [2, 2], [3, 2], // Arjun likes Priya's posts
+    [4, 1], [5, 1], [6, 1]  // Priya likes Arjun's posts
   ];
 
   for (const l of likes) {
@@ -189,11 +184,8 @@ function seedDemoData(db) {
   }
 
   const follows = [
-    [1,2],[1,3],[1,5],
-    [2,1],[2,3],[2,4],
-    [3,1],[3,2],[3,4],[3,5],
-    [4,1],[4,2],[4,3],
-    [5,1],[5,2],[5,3],[5,4],
+    [1, 2],
+    [2, 1]
   ];
 
   for (const f of follows) {
