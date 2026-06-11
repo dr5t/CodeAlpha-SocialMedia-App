@@ -181,13 +181,34 @@
   function openEditModal() {
     const modal = document.getElementById('edit-modal');
     const nameInput = document.getElementById('edit-display-name');
+    const usernameInput = document.getElementById('edit-username');
+    const passwordInput = document.getElementById('edit-password');
+    const pronounsInput = document.getElementById('edit-pronouns');
+    const linksInput = document.getElementById('edit-links');
+    const genderSelect = document.getElementById('edit-gender');
     const bioInput = document.getElementById('edit-bio');
+    const avatarPreview = document.getElementById('edit-avatar-preview');
 
     nameInput.value = profileData.display_name || '';
+    usernameInput.value = profileData.username || '';
+    passwordInput.value = '';
+    passwordInput.disabled = true;
+    document.getElementById('password-field-hint').style.display = 'none';
+    pronounsInput.value = profileData.pronouns || '';
+    linksInput.value = profileData.links || '';
+    genderSelect.value = profileData.gender || 'Prefer not to say';
     bioInput.value = profileData.bio || '';
+    avatarPreview.src = profileData.avatar || '/images/default-avatar.svg';
 
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
+
+    // Username input change enables password field
+    usernameInput.oninput = () => {
+      const changed = usernameInput.value.trim().toLowerCase() !== profileData.username;
+      passwordInput.disabled = !changed;
+      document.getElementById('password-field-hint').style.display = changed ? 'block' : 'none';
+    };
   }
 
   document.getElementById('edit-modal-close').addEventListener('click', () => {
@@ -204,29 +225,203 @@
 
   document.getElementById('save-profile-btn').addEventListener('click', async () => {
     const nameInput = document.getElementById('edit-display-name');
+    const usernameInput = document.getElementById('edit-username');
+    const passwordInput = document.getElementById('edit-password');
+    const pronounsInput = document.getElementById('edit-pronouns');
+    const linksInput = document.getElementById('edit-links');
+    const genderSelect = document.getElementById('edit-gender');
     const bioInput = document.getElementById('edit-bio');
+
+    const payload = {
+      display_name: nameInput.value,
+      bio: bioInput.value,
+      username: usernameInput.value.trim(),
+      pronouns: pronounsInput.value,
+      links: linksInput.value,
+      gender: genderSelect.value
+    };
+
+    const isUsernameChanged = usernameInput.value.trim().toLowerCase() !== profileData.username;
+    if (isUsernameChanged) {
+      if (!passwordInput.value) {
+        showToast('Password required to change username');
+        return;
+      }
+      payload.password = passwordInput.value;
+    }
 
     try {
       const data = await api('/api/users/update', {
         method: 'PUT',
-        body: JSON.stringify({
-          display_name: nameInput.value,
-          bio: bioInput.value,
-        }),
+        body: JSON.stringify(payload),
       });
 
-      profileDisplayName.textContent = data.user.display_name;
-      profileBioText.textContent = data.user.bio;
-      profileData.display_name = data.user.display_name;
-      profileData.bio = data.user.bio;
-
+      showToast('Profile updated!');
       document.getElementById('edit-modal').classList.remove('active');
       document.body.style.overflow = '';
-      showToast('Profile updated!');
+
+      if (isUsernameChanged) {
+        window.location.href = `/profile/${data.user.username}`;
+      } else {
+        profileData = { ...profileData, ...data.user };
+        loadProfile();
+      }
     } catch (err) {
-      showToast('Failed to update profile');
+      showToast(err.message || 'Failed to update profile');
     }
   });
+
+  // --- Profile Avatar Actions ---
+  const triggerAvatarUpload = document.getElementById('trigger-avatar-upload');
+  const removeAvatarBtn = document.getElementById('remove-avatar-btn');
+  const avatarFileInput = document.getElementById('avatar-file-input');
+  const editAvatarPreview = document.getElementById('edit-avatar-preview');
+
+  if (triggerAvatarUpload) {
+    triggerAvatarUpload.addEventListener('click', () => avatarFileInput.click());
+  }
+
+  if (avatarFileInput) {
+    avatarFileInput.addEventListener('change', async () => {
+      const file = avatarFileInput.files[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append('avatar', file);
+
+      try {
+        const data = await api('/api/users/avatar', {
+          method: 'POST',
+          body: formData,
+        });
+
+        showToast('Avatar updated!');
+        editAvatarPreview.src = data.user.avatar;
+        profileAvatar.src = data.user.avatar;
+        profileData.avatar = data.user.avatar;
+
+        const navAvatar = document.getElementById('nav-avatar');
+        if (navAvatar) navAvatar.src = data.user.avatar;
+        const mobileNavAvatar = document.getElementById('mobile-nav-avatar');
+        if (mobileNavAvatar) mobileNavAvatar.src = data.user.avatar;
+      } catch (err) {
+        showToast(err.message || 'Failed to upload avatar');
+      }
+    });
+  }
+
+  if (removeAvatarBtn) {
+    removeAvatarBtn.addEventListener('click', async () => {
+      try {
+        const data = await api('/api/users/avatar', { method: 'DELETE' });
+        showToast('Avatar removed');
+        editAvatarPreview.src = data.user.avatar;
+        profileAvatar.src = data.user.avatar;
+        profileData.avatar = data.user.avatar;
+
+        const navAvatar = document.getElementById('nav-avatar');
+        if (navAvatar) navAvatar.src = data.user.avatar;
+        const mobileNavAvatar = document.getElementById('mobile-nav-avatar');
+        if (mobileNavAvatar) mobileNavAvatar.src = data.user.avatar;
+      } catch (err) {
+        showToast('Failed to remove avatar');
+      }
+    });
+  }
+
+  // --- Settings & Verification Badges Modals ---
+  const settingsModal = document.getElementById('settings-modal');
+  const settingsClose = document.getElementById('settings-modal-close');
+  const settingsVerifyBtn = document.getElementById('settings-verify-btn');
+  const settingsLogoutBtn = document.getElementById('settings-logout-btn');
+
+  const verifyModal = document.getElementById('verify-modal');
+  const verifyClose = document.getElementById('verify-modal-close');
+  const startPaymentBtn = document.getElementById('start-payment-btn');
+
+  function openSettingsModal() {
+    settingsModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeSettingsModal() {
+    settingsModal.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  function openVerifyModal() {
+    closeSettingsModal();
+    verifyModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeVerifyModal() {
+    verifyModal.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  if (settingsClose) settingsClose.addEventListener('click', closeSettingsModal);
+  if (settingsVerifyBtn) settingsVerifyBtn.addEventListener('click', openVerifyModal);
+  if (verifyClose) verifyClose.addEventListener('click', closeVerifyModal);
+
+  if (settingsModal) {
+    settingsModal.addEventListener('click', (e) => {
+      if (e.target === settingsModal) closeSettingsModal();
+    });
+  }
+  if (verifyModal) {
+    verifyModal.addEventListener('click', (e) => {
+      if (e.target === verifyModal) closeVerifyModal();
+    });
+  }
+
+  if (settingsLogoutBtn) {
+    settingsLogoutBtn.addEventListener('click', async () => {
+      try {
+        await api('/api/auth/logout', { method: 'POST' });
+        window.location.href = '/';
+      } catch (err) {
+        showToast('Error logging out');
+      }
+    });
+  }
+
+  const personalSettingsShortcut = document.getElementById('edit-modal-personal-settings-btn');
+  if (personalSettingsShortcut) {
+    personalSettingsShortcut.addEventListener('click', () => {
+      document.getElementById('edit-modal').classList.remove('active');
+      openSettingsModal();
+    });
+  }
+
+  if (startPaymentBtn) {
+    startPaymentBtn.addEventListener('click', async () => {
+      const btnText = startPaymentBtn.querySelector('.btn-text');
+      const spinner = startPaymentBtn.querySelector('.payment-spinner');
+      
+      btnText.style.display = 'none';
+      spinner.style.display = 'block';
+      startPaymentBtn.disabled = true;
+
+      setTimeout(async () => {
+        try {
+          const response = await api('/api/users/verify/purchase', { method: 'POST' });
+          showToast('Verification successful! Badge earned!');
+          closeVerifyModal();
+          
+          profileData.is_verified = 1;
+          loadProfile();
+        } catch (err) {
+          showToast('Payment failed, please try again.');
+        } finally {
+          btnText.style.display = 'block';
+          spinner.style.display = 'none';
+          startPaymentBtn.disabled = false;
+        }
+      }, 2000);
+    });
+  }
+
 
   // --- Followers/Following modals ---
   const followListModal = document.getElementById('follow-list-modal');
