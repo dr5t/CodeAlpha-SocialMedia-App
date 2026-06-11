@@ -919,6 +919,41 @@ ul, ol {
   border-color: var(--text-secondary);
 }
 
+.password-input-wrapper .auth-input {
+  padding-right: 40px;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: color var(--transition);
+}
+
+.password-toggle-btn:hover {
+  color: var(--text-primary);
+}
+
+.auth-logo-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.auth-logo-img {
+  max-height: 50px;
+  width: auto;
+}
+
 .auth-input::placeholder {
   color: var(--text-secondary);
   font-size: 12px;

@@ -487,6 +487,25 @@
     }
   }
 
+  // Toggle password visibility helper
+  document.querySelectorAll('.password-toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const input = btn.previousElementSibling;
+      const eyeShow = btn.querySelector('.eye-icon-show');
+      const eyeHide = btn.querySelector('.eye-icon-hide');
+      
+      if (input.type === 'password') {
+        input.type = 'text';
+        eyeShow.style.display = 'none';
+        eyeHide.style.display = 'block';
+      } else {
+        input.type = 'password';
+        eyeShow.style.display = 'block';
+        eyeHide.style.display = 'none';
+      }
+    });
+  });
+
   // --- Init ---
   await loadProfile();
 })();
