@@ -126,7 +126,7 @@
       console.error('Load post error:', err);
       document.getElementById('post-detail').innerHTML = `
         <div class="empty-state" style="padding-top:60px;">
-          <span class="empty-state__icon">😢</span>
+          <span class="empty-state__icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M16 16s-1.5-2-4-2-4 2-4 2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg></span>
           <h2 class="empty-state__title">Post not found</h2>
           <p class="empty-state__text">This post may have been deleted.</p>
           <a href="/feed" class="btn btn-primary">Go Home</a>

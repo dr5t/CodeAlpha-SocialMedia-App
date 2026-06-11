@@ -11,7 +11,7 @@
   <!-- Top Header -->
   <header class="top-header" id="top-header">
     <div class="top-header__inner">
-      <a class="top-header__logo" href="/feed" id="nav-logo">Vibe</a>
+      <a class="top-header__logo" href="/feed" id="nav-logo"><img src="/images/logo.png" alt="Vibe Logo"></a>
 
       <div class="top-header__search" id="search-container">
         <span class="top-header__search-icon">
@@ -77,7 +77,7 @@
 
         <!-- Empty state -->
         <div class="empty-state" id="feed-empty" style="display:none;">
-          <span class="empty-state__icon">📷</span>
+          <span class="empty-state__icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></span>
           <h2 class="empty-state__title">Welcome to Vibe</h2>
           <p class="empty-state__text">Follow people to start seeing their photos here.</p>
           <a href="/explore" class="btn btn-primary">Explore</a>
@@ -110,7 +110,7 @@
       </div>
       <div class="modal__body">
         <div class="upload-area" id="upload-area">
-          <span class="upload-icon">📷</span>
+          <span class="upload-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg></span>
           <p class="upload-text">Drag photos here</p>
           <button type="button" class="upload-btn-inline" id="select-file-btn">Select from computer</button>
         </div>
@@ -122,6 +122,24 @@
 
   <!-- Toast Container -->
   <div class="toast-container" id="toast-container"></div>
+
+  <!-- Story Viewer Modal -->
+  <div class="story-viewer" id="story-viewer">
+    <button class="story-viewer__close" id="story-close-btn">&times;</button>
+    <div class="story-viewer__content">
+      <div class="story-viewer__progress-container">
+        <div class="story-viewer__progress-bar">
+          <div class="story-viewer__progress-fill" id="story-progress-fill"></div>
+        </div>
+      </div>
+      <div class="story-viewer__header">
+        <img src="" alt="" class="story-viewer__avatar" id="story-avatar">
+        <span class="story-viewer__username" id="story-username"></span>
+        <span class="story-viewer__time">2h</span>
+      </div>
+      <img src="" alt="Story" class="story-viewer__image" id="story-image">
+    </div>
+  </div>
 
   <script src="/js/app.js"></script>
   <script src="/js/feed.js"></script>

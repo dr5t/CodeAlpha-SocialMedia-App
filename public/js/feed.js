@@ -18,23 +18,21 @@
 
   // --- Load stories (from followed users) ---
   function renderStories() {
-    // Use suggestions as "stories" placeholder
     api('/api/users/suggestions')
       .then(data => {
         const users = data.users || [];
-        // Add current user first as "Your story"
         const allStories = [
           { username: currentUser.username, display_name: 'Your story', avatar: currentUser.avatar },
           ...users,
         ];
 
-        storiesBar.innerHTML = allStories.map(u => `
-          <a href="/profile/${u.username}" class="story-item" style="text-decoration:none;color:inherit;">
-            <div class="story-ring">
+        storiesBar.innerHTML = allStories.map((u, idx) => `
+          <div class="story-item" onclick="openStory('${u.username}', '${u.avatar}', 'story-ring-${idx}')">
+            <div class="story-ring" id="story-ring-${idx}">
               <img src="${u.avatar}" alt="${u.username}">
             </div>
             <span class="story-name">${u.username === currentUser.username ? 'Your story' : u.username}</span>
-          </a>
+          </div>
         `).join('');
       })
       .catch(() => {
@@ -289,3 +287,54 @@ async function handleSuggestionFollow(btn, userId) {
     showToast('Already following');
   }
 }
+
+// --- Story Viewer Logic ---
+let storyTimeout;
+let storyAnimation;
+
+function openStory(username, avatar, ringId) {
+  const viewer = document.getElementById('story-viewer');
+  const fill = document.getElementById('story-progress-fill');
+  
+  document.getElementById('story-avatar').src = avatar;
+  document.getElementById('story-username').textContent = username;
+  document.getElementById('story-image').src = avatar; // Fallback to avatar as story image
+  
+  viewer.classList.add('active');
+  
+  // Reset progress bar
+  fill.style.transition = 'none';
+  fill.style.width = '0%';
+  
+  // Start animation after a tiny delay to allow CSS reset to apply
+  setTimeout(() => {
+    fill.style.transition = 'width 5s linear';
+    fill.style.width = '100%';
+  }, 50);
+  
+  // Auto close after 5 seconds
+  clearTimeout(storyTimeout);
+  storyTimeout = setTimeout(() => {
+    closeStory(ringId);
+  }, 5000);
+}
+
+function closeStory(ringId) {
+  const viewer = document.getElementById('story-viewer');
+  viewer.classList.remove('active');
+  clearTimeout(storyTimeout);
+  
+  // Mark as viewed
+  if (ringId) {
+    const ring = document.getElementById(ringId);
+    if (ring) ring.classList.add('viewed');
+  }
+}
+
+// Close button listener
+document.addEventListener('DOMContentLoaded', () => {
+  const closeBtn = document.getElementById('story-close-btn');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => closeStory());
+  }
+});
