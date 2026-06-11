@@ -9,8 +9,12 @@
 </p>
 
 <p align="center">
-  <a href="http://localhost:3000"><img src="https://img.shields.io/badge/Status-Active-brightgreen?style=for-the-badge" alt="Status" /></a>
+  <a href="https://vibe-social-ji33.onrender.com"><img src="https://img.shields.io/badge/Status-Live-brightgreen?style=for-the-badge" alt="Status" /></a>
   <a href="https://github.com/dr5t/CodeAlpha-SocialMedia-App"><img src="https://img.shields.io/badge/Platform-Web-blue?style=for-the-badge" alt="Platform" /></a>
+</p>
+
+<p align="center">
+  <a href="https://vibe-social-ji33.onrender.com"><strong>Explore Live Demo »</strong></a>
 </p>
 
 <p align="center">
