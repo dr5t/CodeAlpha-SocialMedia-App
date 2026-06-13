@@ -4,6 +4,7 @@
 
 <h1 align="center">Vibe Social</h1>
 
+
 <p align="center">
   <strong>A Premium, High-Fidelity Social Experience</strong>
 </p>
